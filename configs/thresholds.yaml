@@ -1,0 +1,16 @@
+drift:
+  numeric_ks_pvalue_threshold: 0.05
+  numeric_psi_warn_threshold: 0.10
+  numeric_psi_alert_threshold: 0.25
+  categorical_chi2_pvalue_threshold: 0.05
+  categorical_cramers_v_threshold: 0.15
+  js_divergence_threshold: 0.10
+  fdr_alpha: 0.05
+  min_sample_size_for_hypothesis_tests: 30
+
+quality:
+  max_null_rate_warn: 0.05
+  max_null_rate_alert: 0.20
+  max_duplicate_rate_warn: 0.01
+  max_duplicate_rate_alert: 0.05
+  z_score_outlier_threshold: 3.5

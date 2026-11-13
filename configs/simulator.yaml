@@ -1,0 +1,32 @@
+simulator:
+  random_seed: 42
+  num_experiments_target: 20000
+  cache_dir: ".cache/simulator"
+  output_format: "parquet"
+  batch_sizes: [100, 500, 1000, 5000]
+
+injectors:
+  missingness:
+    mechanisms: ["MCAR", "MAR", "MNAR"]
+    severities: [0.01, 0.05, 0.10, 0.25, 0.50]
+  covariate_drift:
+    mean_shift_std_multipliers: [0.2, 0.5, 1.0, 2.0]
+    variance_scales: [0.5, 1.5, 2.5]
+    unit_errors: [10.0, 100.0, 0.01]
+    new_category_rates: [0.05, 0.15, 0.30]
+  concept_drift:
+    flip_probabilities: [0.02, 0.05, 0.10, 0.20]
+  label_noise:
+    types: ["symmetric", "asymmetric", "instance_dependent"]
+    noise_rates: [0.02, 0.05, 0.10, 0.20]
+  outliers:
+    rates: [0.01, 0.03, 0.08]
+    sentinel_values: [-999, 9999, "N/A", "null", "UNKNOWN"]
+  type_corruption:
+    stringify_rates: [0.02, 0.05, 0.10]
+  schema:
+    drop_column_rates: [0.1, 0.2]
+    rename_column_rates: [0.1]
+  compound:
+    probabilities_of_interaction: [0.3, 0.5]
+    max_simultaneous_issues: 4

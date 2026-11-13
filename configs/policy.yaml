@@ -1,0 +1,42 @@
+version: "1.0.0"
+default_risk_tier: "standard"
+
+# Global decision thresholds
+thresholds:
+  damage_approve_max: 0.05       # Max predicted damage (upper conformal bound) to automatically approve
+  damage_repair_max: 0.20        # Max predicted damage eligible for automated repair
+  damage_reject_min: 0.20        # Damage exceeding this automatically quarantines
+  ood_anomaly_threshold: -0.5    # Isolation forest anomaly score threshold for OOD
+  conformal_confidence: 0.90     # Conformal coverage level (1 - alpha)
+  max_repair_budget_pct: 0.15    # Maximum fraction of cells that can be modified during repair
+
+# Hard-block rules that trigger immediate quarantine regardless of predicted damage
+hard_blocks:
+  unmasked_direct_pii: true      # Any unmasked direct identifier (SSN, Aadhaar, PAN, CC)
+  breaking_schema_change: true   # Dropped required columns, incompatible type narrowing
+  corrupted_audit_hash: true     # Lineage or hash mismatch
+
+# Tier-based overrides
+risk_tiers:
+  critical:
+    damage_approve_max: 0.02
+    damage_repair_max: 0.10
+    conformal_confidence: 0.95
+    require_human_escalation_for_repairs: true
+  standard:
+    damage_approve_max: 0.05
+    damage_repair_max: 0.20
+    conformal_confidence: 0.90
+    require_human_escalation_for_repairs: false
+  low_risk:
+    damage_approve_max: 0.10
+    damage_repair_max: 0.30
+    conformal_confidence: 0.85
+    require_human_escalation_for_repairs: false
+
+# Human-in-the-loop review configuration
+human_review:
+  escalate_on_ood: true
+  escalate_on_boundary_margin: 0.01  # Within +/- 1% of approve threshold
+  sla_hours: 24
+  default_action_on_sla_timeout: "QUARANTINE"
