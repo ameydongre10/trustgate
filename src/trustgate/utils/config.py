@@ -1,7 +1,7 @@
 """Pydantic-based configuration management and YAML parsing."""
 
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import yaml
 from pydantic import BaseModel, Field
@@ -83,11 +83,11 @@ def load_policy_config(path: Path | str | None = None) -> PolicyConfig:
     """Load PolicyConfig from a file or default config directory."""
     target_path = Path(path) if path else Path("configs/policy.yaml")
     data = load_yaml(target_path)
-    return PolicyConfig.model_validate(data)
+    return cast(PolicyConfig, PolicyConfig.model_validate(data))
 
 
 def load_thresholds_config(path: Path | str | None = None) -> ThresholdsConfig:
     """Load ThresholdsConfig from a file or default config directory."""
     target_path = Path(path) if path else Path("configs/thresholds.yaml")
     data = load_yaml(target_path)
-    return ThresholdsConfig.model_validate(data)
+    return cast(ThresholdsConfig, ThresholdsConfig.model_validate(data))

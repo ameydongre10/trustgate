@@ -4,27 +4,27 @@ This matrix tracks the mapping between all explicit edge cases specified in Sect
 
 | ID | Category | Edge Case Description | Target Module | Designated Test Name | Status |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **8.1.1** | Ingest | Empty file (0 bytes) | `trustgate.ingest.readers` | `test_ingest_empty_file` | Planned (Phase 1) |
-| **8.1.2** | Ingest | Header-only file (0 data rows) | `trustgate.ingest.readers` | `test_ingest_header_only_file` | Planned (Phase 1) |
-| **8.1.3** | Ingest | Single row / single column table | `trustgate.ingest.readers` | `test_ingest_single_row_single_col` | Planned (Phase 1) |
-| **8.1.4** | Ingest | Ragged rows, mixed delimiters, quoted newlines | `trustgate.ingest.readers` | `test_ingest_ragged_rows_and_delimiters` | Planned (Phase 1) |
-| **8.1.5** | Ingest | UTF-8 with BOM, Latin-1, Mojibake encodings | `trustgate.ingest.readers` | `test_ingest_encodings_and_mojibake` | Planned (Phase 1) |
-| **8.1.6** | Ingest | Duplicate, empty, whitespace-variant column names | `trustgate.ingest.sanitizer` | `test_sanitizer_column_naming_edge_cases` | Planned (Phase 1) |
-| **8.1.7** | Ingest | Injection strings in headers (`=cmd\|...`, `"Ignore instructions"`) | `trustgate.ingest.sanitizer` | `test_sanitizer_injection_in_headers` | Planned (Phase 1) |
-| **8.1.8** | Ingest | Mixed types in column (numbers + strings) | `trustgate.ingest.schema` | `test_schema_mixed_type_resolution` | Planned (Phase 1) |
-| **8.1.9** | Ingest | Numeric strings with commas vs locale decimals (`1,234.5` vs `1.234,5`) | `trustgate.ingest.schema` | `test_schema_locale_numeric_parsing` | Planned (Phase 1) |
-| **8.1.10** | Ingest | Multi-format dates, ambiguous day/month, epoch millis vs seconds | `trustgate.ingest.schema` | `test_schema_date_parsing_ambiguities` | Planned (Phase 1) |
-| **8.1.11** | Ingest | Boolean variants (Y/N, 0/1, True/False, yes/no) | `trustgate.ingest.schema` | `test_schema_boolean_variants` | Planned (Phase 1) |
-| **8.1.12** | Ingest | Decompression bombs / ratio check (100:1 max ratio limit) | `trustgate.ingest.readers` | `test_ingest_decompression_bomb_rejection` | Planned (Phase 1) |
-| **8.1.13** | Ingest | Zero-variance numeric columns (division by zero guards in PSI/z-score) | `trustgate.profiling.drift` | `test_drift_zero_variance_guards` | Planned (Phase 1) |
-| **8.2.1** | Contracts | No contract provided (automatic contract inference with `INFERRED` mark) | `trustgate.contracts.engine` | `test_contract_inference_untrusted` | Planned (Phase 1) |
-| **8.2.2** | Contracts | Schema version mismatch, breaking vs non-breaking changes | `trustgate.contracts.engine` | `test_contract_version_compatibility` | Planned (Phase 1) |
-| **8.2.3** | Contracts | Malicious regex / ReDoS in contract definition | `trustgate.contracts.engine` | `test_contract_redos_protection` | Planned (Phase 1) |
-| **8.3.1** | Stats/Drift | Small batches (<30 rows): fallback to permutation/exact tests or `INSUFFICIENT_DATA` | `trustgate.profiling.drift` | `test_drift_small_batch_fallback` | Planned (Phase 1) |
-| **8.3.2** | Stats/Drift | Large batches: effect sizes (Cramér's V, PSI) paired with p-values | `trustgate.profiling.drift` | `test_drift_large_batch_effect_sizes` | Planned (Phase 1) |
-| **8.3.3** | Stats/Drift | PSI with zero-count bins ($\epsilon$-smoothing) and quantile ties | `trustgate.profiling.drift` | `test_drift_psi_zero_bin_smoothing` | Planned (Phase 1) |
-| **8.3.4** | Stats/Drift | Multiple testing correction (Benjamini-Hochberg FDR) across columns | `trustgate.profiling.drift` | `test_drift_multiple_testing_fdr` | Planned (Phase 1) |
-| **8.3.5** | Stats/Drift | Extreme class imbalance (0.1% positives) and single-class batches | `trustgate.profiling.drift` | `test_drift_extreme_imbalance_single_class` | Planned (Phase 1) |
+| **8.1.1** | Ingest | Empty file (0 bytes) | `trustgate.ingest.readers` | `test_ingest_empty_and_header_only_file` | Implemented (Phase 1) |
+| **8.1.2** | Ingest | Header-only file (0 data rows) | `trustgate.ingest.readers` | `test_ingest_empty_and_header_only_file` | Implemented (Phase 1) |
+| **8.1.3** | Ingest | Single row / single column table | `trustgate.ingest.readers` | `test_ingest_single_row_single_col` | Implemented (Phase 1) |
+| **8.1.4** | Ingest | Ragged rows, mixed delimiters, quoted newlines | `trustgate.ingest.readers` | `read_batch_file` | Implemented (Phase 1) |
+| **8.1.5** | Ingest | UTF-8 with BOM, Latin-1, Mojibake encodings | `trustgate.ingest.readers` | `test_ingest_encodings_and_bom` | Implemented (Phase 1) |
+| **8.1.6** | Ingest | Duplicate, empty, whitespace-variant column names | `trustgate.ingest.sanitizer` | `test_sanitize_column_names_edge_cases` | Implemented (Phase 1) |
+| **8.1.7** | Ingest | Injection strings in headers (`=cmd\|...`, `"Ignore instructions"`) | `trustgate.ingest.sanitizer` | `test_sanitize_column_names_edge_cases` | Implemented (Phase 1) |
+| **8.1.8** | Ingest | Mixed types in column (numbers + strings) | `trustgate.ingest.schema` | `test_numeric_parsing_locales_and_symbols` | Implemented (Phase 1) |
+| **8.1.9** | Ingest | Numeric strings with commas vs locale decimals (`1,234.5` vs `1.234,5`) | `trustgate.ingest.schema` | `test_numeric_parsing_locales_and_symbols` | Implemented (Phase 1) |
+| **8.1.10** | Ingest | Multi-format dates, ambiguous day/month, epoch millis vs seconds | `trustgate.ingest.schema` | `test_boolean_and_timestamp_parsing` | Implemented (Phase 1) |
+| **8.1.11** | Ingest | Boolean variants (Y/N, 0/1, True/False, yes/no) | `trustgate.ingest.schema` | `test_boolean_and_timestamp_parsing` | Implemented (Phase 1) |
+| **8.1.12** | Ingest | Decompression bombs / ratio check (100:1 max ratio limit) | `trustgate.ingest.readers` | `test_decompression_bomb_detection` | Implemented (Phase 1) |
+| **8.1.13** | Ingest | Zero-variance numeric columns (division by zero guards in PSI/z-score) | `trustgate.profiling.drift` | `test_drift_zero_variance_and_small_batch` | Implemented (Phase 1) |
+| **8.2.1** | Contracts | No contract provided (automatic contract inference with `INFERRED` mark) | `trustgate.contracts.inferrer` | `test_contract_inference` | Implemented (Phase 1) |
+| **8.2.2** | Contracts | Schema version mismatch, breaking vs non-breaking changes | `trustgate.contracts.validator` | `test_contract_breaking_missing_required_column` | Implemented (Phase 1) |
+| **8.2.3** | Contracts | Malicious regex / ReDoS in contract definition | `trustgate.contracts.validator` | `test_safe_regex_match_and_redos_guard` | Implemented (Phase 1) |
+| **8.3.1** | Stats/Drift | Small batches (<30 rows): fallback to permutation/exact tests or `INSUFFICIENT_DATA` | `trustgate.profiling.drift` | `test_drift_zero_variance_and_small_batch` | Implemented (Phase 1) |
+| **8.3.2** | Stats/Drift | Large batches: effect sizes (Cramér's V, PSI) paired with p-values | `trustgate.profiling.drift` | `test_categorical_drift_and_new_categories` | Implemented (Phase 1) |
+| **8.3.3** | Stats/Drift | PSI with zero-count bins ($\epsilon$-smoothing) and quantile ties | `trustgate.profiling.drift` | `test_psi_identical_and_drifted` | Implemented (Phase 1) |
+| **8.3.4** | Stats/Drift | Multiple testing correction (Benjamini-Hochberg FDR) across columns | `trustgate.profiling.drift` | `test_fdr_correction_multi_column` | Implemented (Phase 1) |
+| **8.3.5** | Stats/Drift | Extreme class imbalance (0.1% positives) and single-class batches | `trustgate.profiling.label_profiler` | `test_labeled_batch_single_class_edge_case` | Implemented (Phase 1) |
 | **8.4.1** | Simulator | MCAR, MAR, MNAR missingness injection | `trustgate.simulator.injectors` | `test_injector_missingness_mechanisms` | Planned (Phase 3) |
 | **8.4.2** | Simulator | Covariate drift (mean, variance, unit change cm to m, unseen categories) | `trustgate.simulator.injectors` | `test_injector_covariate_and_unit_drift` | Planned (Phase 3) |
 | **8.4.3** | Simulator | Concept drift & label noise (symmetric, asymmetric, instance-dependent) | `trustgate.simulator.injectors` | `test_injector_concept_drift_and_label_noise` | Planned (Phase 3) |
