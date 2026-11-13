@@ -4,12 +4,14 @@ import re
 from typing import Any
 
 PROMPT_INJECTION_PATTERNS = [
-    re.compile(r"ignore\s+(all\s+)?(previous|prior)\s+instructions", re.IGNORECASE),
-    re.compile(r"system\s*prompt", re.IGNORECASE),
+    re.compile(r"ignore\s+(all\s+)?(previous|prior)\s+(instructions|rules)", re.IGNORECASE),
+    re.compile(r"system\s*(prompt|message)", re.IGNORECASE),
     re.compile(r"you\s+are\s+now\s+(a|an)?", re.IGNORECASE),
     re.compile(r"dan\s+mode", re.IGNORECASE),
     re.compile(r"jailbreak", re.IGNORECASE),
-    re.compile(r"override\s+(all\s+)?rules", re.IGNORECASE),
+    re.compile(r"override\s+(all\s+)?(rules|decision)", re.IGNORECASE),
+    re.compile(r"developer\s+(override|mode)", re.IGNORECASE),
+    re.compile(r"human\s+evaluator", re.IGNORECASE),
     re.compile(r"new\s+instructions\s*:", re.IGNORECASE),
 ]
 
@@ -37,7 +39,11 @@ class GuardrailsEngine:
         cleaned = re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]", "", cleaned)
         for pat in PROMPT_INJECTION_PATTERNS:
             cleaned = pat.sub("[REDACTED_INJECTION_PATTERN]", cleaned)
-        return cleaned.strip()
+        cleaned = cleaned.strip()
+        # Neutralize formula injection prefixes
+        if cleaned.startswith(("=", "+", "-", "@")):
+            cleaned = cleaned.lstrip("=+-@\t\r ")
+        return cleaned
 
     @staticmethod
     def format_safe_summary_context(

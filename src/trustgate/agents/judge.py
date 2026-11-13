@@ -32,6 +32,13 @@ def judge_node(
         return state
 
     try:
+        from trustgate.simulator.runner import extract_fast_issue_features
+
+        issue_profile = extract_fast_issue_features(
+            state.raw_df, state.ref_df, state.target_model, state.spec
+        )
+        state.damage_prediction = damage_predictor.predict(issue_profile)
+
         decision_rec, repaired_df = policy_engine.evaluate(
             batch_id=state.batch_id,
             df=state.raw_df,

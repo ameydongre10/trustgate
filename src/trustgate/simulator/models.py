@@ -86,11 +86,13 @@ class TargetModel:
         if self.task_type == "classification":
             if clean_metric <= 0:
                 return 0.0
-            return float((clean_metric - corrupted_metric) / clean_metric)
+            raw = (clean_metric - corrupted_metric) / clean_metric
+            return float(np.clip(raw, -0.2, 1.0))
         else:
             if clean_metric <= 0:
                 return 0.0
-            return float((corrupted_metric - clean_metric) / clean_metric)
+            raw = (corrupted_metric - clean_metric) / clean_metric
+            return float(np.clip(raw, -0.2, 3.0))
 
     def get_importance_weighted_vector(self, feature_metrics: dict[str, float]) -> float:
         """Compute importance-weighted average for a per-feature metric (e.g. null rate, PSI)."""

@@ -305,51 +305,59 @@ class ExperimentRunner:
         ]
         severities = [0.01, 0.05, 0.10, 0.20, 0.35, 0.50]
 
+        # Build candidate grid across all dimensions
+        candidates: list[tuple[str, str, str, float]] = []
+        target_datasets = ["credit_default"] if n_rows_target < 100 else datasets
+
+        for d_name in target_datasets:
+            task_type = "regression" if d_name == "housing_prices" else "classification"
+            for m_type in model_types:
+                # Guaranteed clean baseline
+                candidates.append((d_name, m_type, "clean", 0.0))
+                for c_type in [c for c in corruption_types if c != "clean"]:
+                    if task_type == "regression" and c_type in ("label_noise", "concept_drift"):
+                        continue
+                    for sev in severities:
+                        candidates.append((d_name, m_type, c_type, sev))
+
+        rng = np.random.default_rng(self.seed)
+        # Stratify / shuffle candidates so all datasets, models, and corruptions appear
+        rng.shuffle(candidates)
+        if len(candidates) > n_rows_target:
+            candidates = candidates[:n_rows_target]
+
+        # Group by dataset and model for cached model loading
+        by_ds_model: dict[tuple[str, str], list[tuple[str, float]]] = {}
+        for d_name, m_type, c_type, sev in candidates:
+            by_ds_model.setdefault((d_name, m_type), []).append((c_type, sev))
+
         records: list[dict[str, Any]] = []
         seed_counter = self.seed
 
-        for d_name in datasets:
+        for (d_name, m_type), tasks in by_ds_model.items():
             train_df, test_df, spec, ref_stats = get_dataset(
                 name=d_name, n_samples=batch_size * 2, seed=self.seed
             )
-            for m_type in model_types:
-                target_model = train_target_model(
+            target_model = train_target_model(
+                spec=spec,
+                train_df=train_df,
+                ref_stats=ref_stats,
+                model_type=m_type,  # type: ignore[arg-type]
+                seed=self.seed,
+            )
+
+            for c_type, sev in tasks:
+                seed_counter += 1
+                rec = self.run_single_simulation(
                     spec=spec,
-                    train_df=train_df,
-                    ref_stats=ref_stats,
-                    model_type=m_type,  # type: ignore[arg-type]
-                    seed=self.seed,
+                    target_model=target_model,
+                    clean_ref_df=train_df,
+                    test_df=test_df,
+                    corruption_type=c_type,
+                    severity=sev,
+                    seed=seed_counter,
                 )
-
-                # Generate samples across corruptions
-                for c_type in corruption_types:
-                    # Skip label noise or concept drift on regression
-                    if spec.task_type == "regression" and c_type in (
-                        "label_noise",
-                        "concept_drift",
-                    ):
-                        continue
-
-                    for sev in severities:
-                        seed_counter += 1
-                        rec = self.run_single_simulation(
-                            spec=spec,
-                            target_model=target_model,
-                            clean_ref_df=train_df,
-                            test_df=test_df,
-                            corruption_type=c_type,
-                            severity=sev,
-                            seed=seed_counter,
-                        )
-                        records.append(rec)
-                        if len(records) >= n_rows_target:
-                            break
-                    if len(records) >= n_rows_target:
-                        break
-                if len(records) >= n_rows_target:
-                    break
-            if len(records) >= n_rows_target:
-                break
+                records.append(rec)
 
         # Save to Parquet
         exp_df = pl.DataFrame(records)

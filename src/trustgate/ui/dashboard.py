@@ -13,7 +13,7 @@ from trustgate.simulator.datasets import get_dataset
 from trustgate.simulator.injectors import (
     inject_mcar,
     inject_mean_shift,
-    inject_outliers,
+    inject_outliers_and_sentinels,
 )
 
 
@@ -248,8 +248,10 @@ def render_human_review_queue(queue: JobQueue) -> None:
     st.write(f"**{len(escalated_jobs)} Batch(es) Awaiting Operator Sign-off:**")
 
     for j in escalated_jobs:
+        risk_val = j.risk_score or 0.0
+        dmg_val = (j.damage_upper or 0.0) * 100.0
         with st.expander(
-            f"⚠️ Batch {j.batch_id} (Risk: {j.risk_score:.1f}/100, Damage Upper: {j.damage_upper * 100:.1f}%)",
+            f"⚠️ Batch {j.batch_id} (Risk: {risk_val:.1f}/100, Damage Upper: {dmg_val:.1f}%)",
             expanded=True,
         ):
             st.markdown(j.explanation or "No explanation generated.")
@@ -354,16 +356,16 @@ def render_quick_simulator(queue: JobQueue) -> None:
         with st.spinner("Injecting corruptions and running TrustGate Agent Workflow..."):
             corrupted_df = test_df
             if "MCAR" in corruption_type:
-                corrupted_df = inject_mcar(
-                    corrupted_df, ["debt_to_income", "credit_score"], rate=0.25, seed=42
+                corrupted_df, _ = inject_mcar(
+                    corrupted_df, ["debt", "credit_score"], severity=0.25, seed=42
                 )
             elif "Mean Shift" in corruption_type:
-                corrupted_df = inject_mean_shift(
-                    corrupted_df, ["credit_score"], shift_std=3.5, seed=42
+                corrupted_df, _ = inject_mean_shift(
+                    corrupted_df, ["credit_score"], shift_stds=3.5, seed=42
                 )
             elif "Outlier" in corruption_type:
-                corrupted_df = inject_outliers(
-                    corrupted_df, ["income", "loan_amount"], rate=0.15, factor=50.0, seed=42
+                corrupted_df, _ = inject_outliers_and_sentinels(
+                    corrupted_df, ["income", "debt"], severity=0.15, seed=42
                 )
 
             # Convert to CSV bytes and submit
@@ -381,8 +383,10 @@ def render_quick_simulator(queue: JobQueue) -> None:
                 time.sleep(0.1)
 
             st.success(f"Batch {job.batch_id} processed!")
+            r_score = job.risk_score or 0.0
+            d_upper = (job.damage_upper or 0.0) * 100.0
             st.info(
-                f"Verdict: **{job.decision}** | Risk Score: **{job.risk_score:.1f}/100** | Damage Upper: **{job.damage_upper * 100:.1f}%**"
+                f"Verdict: **{job.decision}** | Risk Score: **{r_score:.1f}/100** | Damage Upper: **{d_upper:.1f}%**"
             )
             st.markdown(job.explanation or "")
 

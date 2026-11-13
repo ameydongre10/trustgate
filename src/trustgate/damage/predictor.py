@@ -73,18 +73,26 @@ class DamagePredictor:
         # 1. Fit monotonic LightGBM model
         self.model.fit(X_tr, y_tr)
 
-        # 2. Calibrate conformal intervals
+        # 2. Calibrate conformal intervals on independent held-out split
         if X_calib is not None and y_calib is not None and len(X_calib) >= 10:
             calib_preds = self.model.predict(np.asarray(X_calib, dtype=np.float32))
             self.conformal.calibrate(y_true=y_calib, y_pred=calib_preds)
         else:
-            # Self-calibrate on holdout slice if calibration set not passed separately
+            # Self-calibrate on a randomized held-out split (true split-conformal)
             n_samples = len(X_tr)
-            if n_samples >= 20:
-                n_calib = max(10, int(n_samples * 0.2))
-                calib_preds = self.model.predict(X_tr[-n_calib:])
-                self.conformal.calibrate(y_true=y_tr[-n_calib:], y_pred=calib_preds)
+            if n_samples >= 50:
+                rng = np.random.default_rng(self.seed)
+                shuffled_idx = rng.permutation(n_samples)
+                n_calib = max(10, int(n_samples * 0.25))
+                calib_idx = shuffled_idx[:n_calib]
+                train_idx = shuffled_idx[n_calib:]
+
+                # Retrain model on training slice only to maintain calibration independence
+                self.model.fit(X_tr[train_idx], y_tr[train_idx])
+                calib_preds = self.model.predict(X_tr[calib_idx])
+                self.conformal.calibrate(y_true=y_tr[calib_idx], y_pred=calib_preds)
             elif n_samples >= 10:
+                self.model.fit(X_tr, y_tr)
                 calib_preds = self.model.predict(X_tr)
                 self.conformal.calibrate(y_true=y_tr, y_pred=calib_preds)
 

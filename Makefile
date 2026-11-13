@@ -25,7 +25,7 @@ clean:
 	rm -rf .pytest_cache .coverage htmlcov .mypy_cache dist build *.egg-info
 
 evaluate:
-	$(PYTHON) -m trustgate.evaluation.runner
+	$(PYTHON) -m trustgate.cli evaluate
 
 demo:
 	$(PYTHON) -m trustgate.cli demo

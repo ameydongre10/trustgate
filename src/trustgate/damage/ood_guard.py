@@ -46,8 +46,16 @@ class OODGuard:
         # 2. Regularized Mahalanobis parameters
         self.mean_vector = np.mean(X_mat, axis=0)
         cov = np.cov(X_mat, rowvar=False)
-        # Regularize covariance to guarantee invertibility
-        cov_reg = cov + np.eye(X_mat.shape[1]) * 1e-4
+        variances = np.var(X_mat, axis=0)
+        # Scale-aware diagonal regularization (minimum floor prevents zero-variance feature explosion)
+        diag_floor = np.array(
+            [
+                0.01 if "rate" in name or "psi" in name or "ratio" in name else 25.0
+                for name in DAMAGE_FEATURE_NAMES[: X_mat.shape[1]]
+            ]
+        )
+        diag_reg = np.maximum(variances * 0.05, diag_floor)
+        cov_reg = cov + np.diag(diag_reg)
         self.inv_cov_matrix = np.linalg.pinv(cov_reg)
 
         # Compute training distances to set threshold at 99th percentile

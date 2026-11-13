@@ -25,6 +25,8 @@ wheels/
 # Testing and typing
 .cache/
 data/
+artifacts/
+trustgate_data/
 .mypy_cache/
 .pytest_cache/
 .hypothesis/
