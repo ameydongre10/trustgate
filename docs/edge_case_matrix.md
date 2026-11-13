@@ -33,13 +33,13 @@ This matrix tracks the mapping between all explicit edge cases specified in Sect
 | **8.5.2** | PII | Indian PAN (`AAAAA9999A`) and Indian mobile phone formats (`+91`) | `trustgate.pii.detectors` | `test_pii_pan_and_indian_phones` | Implemented (Phase 2) |
 | **8.5.3** | PII | International PII (Credit cards via Luhn, Passports, Emails, UPI, IBAN) | `trustgate.pii.detectors` | `test_pii_international_types` | Implemented (Phase 2) |
 | **8.5.4** | PII | Irreversible masking & salted HMAC tokenization | `trustgate.pii.masking` | `test_pii_masking_and_hmac_tokenization` | Implemented (Phase 2) |
-| **8.5.5** | PII | Zero raw cell values sent to LLM prompt | `trustgate.agents.guardrails` | `test_llm_zero_raw_pii_leakage` | Planned (Phase 6) |
+| **8.5.5** | PII | Zero raw cell values sent to LLM prompt | `trustgate.agents.guardrails` | `test_guardrails_prompt_injection_defense` | Implemented (Phase 6) |
 | **8.6.1** | Repair | Repair worsens data (post-repair damage > pre-repair): rollback to quarantine | `trustgate.repair.planner` | `test_closed_loop_budget_cap_enforcement` | Implemented (Phase 5) |
 | **8.6.2** | Repair | Reference-fitted imputation (forbidden to fit on corrupted batch) | `trustgate.repair.strategies` | `test_reference_fitted_imputation` | Implemented (Phase 5) |
 | **8.6.3** | Repair | Idempotency ($Repair(Repair(X)) == Repair(X)$) | `trustgate.repair.strategies` | `test_repair_idempotency` | Implemented (Phase 5) |
 | **8.6.4** | Repair | Repair budget exceeded (cells changed > cap): reject to quarantine | `trustgate.repair.planner` | `test_closed_loop_budget_cap_enforcement` | Implemented (Phase 5) |
-| **8.7.1** | Agents/LLM | LLM failure/timeout/5xx: seamless fallback to deterministic template explainer | `trustgate.agents.explainer` | `test_explainer_fallback_on_llm_failure` | Planned (Phase 6) |
-| **8.7.2** | Agents/LLM | Prompt injection in data values/headers: sanitized and non-influential on Judge | `trustgate.agents.guardrails` | `test_prompt_injection_adversarial_defense` | Planned (Phase 6) |
-| **8.7.3** | Agents/LLM | Numeric claim verification: rejected hallucinated numbers in explanations | `trustgate.agents.verifier` | `test_numeric_claim_verifier_hallucination_trap` | Planned (Phase 6) |
+| **8.7.1** | Agents/LLM | LLM failure/timeout/5xx: seamless fallback to deterministic template explainer | `trustgate.agents.llm_clients` | `test_template_llm_client_offline` | Implemented (Phase 6) |
+| **8.7.2** | Agents/LLM | Prompt injection in data values/headers: sanitized and non-influential on Judge | `trustgate.agents.guardrails` | `test_guardrails_prompt_injection_defense` | Implemented (Phase 6) |
+| **8.7.3** | Agents/LLM | Numeric claim verification: rejected hallucinated numbers in explanations | `trustgate.agents.verifier` | `test_numeric_claim_verifier_hallucination_trap` | Implemented (Phase 6) |
 | **8.8.1** | Policy | Deterministic policy evaluation & separation of duties | `trustgate.policy.engine` | `test_policy_decision_clean_batch_approve` | Implemented (Phase 5) |
 | **8.9.1** | Audit | Hash-chained log tampering detection via `verify` | `trustgate.audit.ledger` | `test_audit_hash_chain_tamper_detection` | Planned (Phase 7) |
