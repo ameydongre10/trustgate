@@ -25,10 +25,10 @@ This matrix tracks the mapping between all explicit edge cases specified in Sect
 | **8.3.3** | Stats/Drift | PSI with zero-count bins ($\epsilon$-smoothing) and quantile ties | `trustgate.profiling.drift` | `test_psi_identical_and_drifted` | Implemented (Phase 1) |
 | **8.3.4** | Stats/Drift | Multiple testing correction (Benjamini-Hochberg FDR) across columns | `trustgate.profiling.drift` | `test_fdr_correction_multi_column` | Implemented (Phase 1) |
 | **8.3.5** | Stats/Drift | Extreme class imbalance (0.1% positives) and single-class batches | `trustgate.profiling.label_profiler` | `test_labeled_batch_single_class_edge_case` | Implemented (Phase 1) |
-| **8.4.1** | Simulator | MCAR, MAR, MNAR missingness injection | `trustgate.simulator.injectors` | `test_injector_missingness_mechanisms` | Planned (Phase 3) |
-| **8.4.2** | Simulator | Covariate drift (mean, variance, unit change cm to m, unseen categories) | `trustgate.simulator.injectors` | `test_injector_covariate_and_unit_drift` | Planned (Phase 3) |
-| **8.4.3** | Simulator | Concept drift & label noise (symmetric, asymmetric, instance-dependent) | `trustgate.simulator.injectors` | `test_injector_concept_drift_and_label_noise` | Planned (Phase 3) |
-| **8.4.4** | Simulator | Compound corruptions (2-4 simultaneous interacting issues) | `trustgate.simulator.compound` | `test_simulator_compound_interactions` | Planned (Phase 3) |
+| **8.4.1** | Simulator | MCAR, MAR, MNAR missingness injection | `trustgate.simulator.injectors` | `test_missingness_injectors` | Implemented (Phase 3) |
+| **8.4.2** | Simulator | Covariate drift (mean, variance, unit change cm to m, unseen categories) | `trustgate.simulator.injectors` | `test_covariate_drift_injectors` | Implemented (Phase 3) |
+| **8.4.3** | Simulator | Concept drift & label noise (symmetric, asymmetric, instance-dependent) | `trustgate.simulator.injectors` | `test_concept_drift_and_label_noise` | Implemented (Phase 3) |
+| **8.4.4** | Simulator | Compound corruptions (2-4 simultaneous interacting issues) | `trustgate.simulator.compound` | `test_compound_corruption` | Implemented (Phase 3) |
 | **8.5.1** | PII | Indian Aadhaar (12-digit with Verhoeff checksum) detection & rejection | `trustgate.pii.detectors` | `test_pii_aadhaar_verhoeff_checksum` | Implemented (Phase 2) |
 | **8.5.2** | PII | Indian PAN (`AAAAA9999A`) and Indian mobile phone formats (`+91`) | `trustgate.pii.detectors` | `test_pii_pan_and_indian_phones` | Implemented (Phase 2) |
 | **8.5.3** | PII | International PII (Credit cards via Luhn, Passports, Emails, UPI, IBAN) | `trustgate.pii.detectors` | `test_pii_international_types` | Implemented (Phase 2) |

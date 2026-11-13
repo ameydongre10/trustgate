@@ -20,6 +20,16 @@ def set_seed(seed: int = 42) -> None:
     np.random.seed(seed)
 
 
+def set_global_seed(seed: int = 42) -> None:
+    """Alias for set_seed."""
+    set_seed(seed)
+
+
+def get_rng(seed: int | None = None) -> np.random.Generator:
+    """Return a NumPy default_rng generator with fixed or reproducible seed."""
+    return np.random.default_rng(seed)
+
+
 class DeterministicContext:
     """Context manager for locally deterministic blocks with state restoration."""
 
