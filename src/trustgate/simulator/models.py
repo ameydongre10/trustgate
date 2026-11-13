@@ -33,6 +33,18 @@ class TargetModel:
     training_reference_stats: dict[str, Any]
     pipeline: Any = field(repr=False)
 
+    @property
+    def reference_stats(self) -> dict[str, Any]:
+        """Convenience property for reference statistics."""
+        return self.training_reference_stats
+
+    @property
+    def spec(self) -> DatasetSpec:
+        """Convenience property for dataset specification."""
+        from trustgate.simulator.datasets import DATASET_REGISTRY
+
+        return DATASET_REGISTRY[self.dataset_name]
+
     def evaluate(self, df: pl.DataFrame | np.ndarray, y_true: np.ndarray) -> float:
         """Evaluate model performance metric on provided test batch against true labels."""
         if isinstance(df, pl.DataFrame):

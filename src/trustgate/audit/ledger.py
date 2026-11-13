@@ -92,6 +92,16 @@ class AuditLedger:
                     entries.append(AuditEntry.model_validate_json(line.strip()))
         return entries
 
+    @property
+    def entries(self) -> list[AuditEntry]:
+        """Convenience property returning all entries."""
+        return self.read_all_entries()
+
+    @property
+    def head_hash(self) -> str:
+        """Convenience property returning the latest chain hash."""
+        return self.get_latest_hash()[0]
+
 
 def verify_audit_ledger(ledger_path: str | Path) -> tuple[bool, list[str]]:
     """Cryptographically verify the integrity of the audit ledger from genesis.
