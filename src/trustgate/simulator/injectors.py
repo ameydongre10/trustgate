@@ -196,7 +196,9 @@ def inject_unseen_categories(
     mask = rng.uniform(0, 1, size=len(series)) < severity
     novel_tokens = ["UNKNOWN_VARIANT_X", "NOVEL_OOD_CATEGORY", "LEGACY_CLASS_Z"]
 
-    new_series = [str(rng.choice(novel_tokens)) if m else s for s, m in zip(series, mask, strict=False)]
+    new_series = [
+        str(rng.choice(novel_tokens)) if m else s for s, m in zip(series, mask, strict=False)
+    ]
     result = result.with_columns(pl.Series(name=column, values=new_series))
 
     return result, {
