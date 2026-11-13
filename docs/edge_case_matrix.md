@@ -29,10 +29,10 @@ This matrix tracks the mapping between all explicit edge cases specified in Sect
 | **8.4.2** | Simulator | Covariate drift (mean, variance, unit change cm to m, unseen categories) | `trustgate.simulator.injectors` | `test_injector_covariate_and_unit_drift` | Planned (Phase 3) |
 | **8.4.3** | Simulator | Concept drift & label noise (symmetric, asymmetric, instance-dependent) | `trustgate.simulator.injectors` | `test_injector_concept_drift_and_label_noise` | Planned (Phase 3) |
 | **8.4.4** | Simulator | Compound corruptions (2-4 simultaneous interacting issues) | `trustgate.simulator.compound` | `test_simulator_compound_interactions` | Planned (Phase 3) |
-| **8.5.1** | PII | Indian Aadhaar (12-digit with Verhoeff checksum) detection & rejection | `trustgate.pii.detectors` | `test_pii_aadhaar_verhoeff_checksum` | Planned (Phase 2) |
-| **8.5.2** | PII | Indian PAN (`AAAAA9999A`) and Indian mobile phone formats (`+91`) | `trustgate.pii.detectors` | `test_pii_pan_and_indian_phones` | Planned (Phase 2) |
-| **8.5.3** | PII | International PII (Credit cards via Luhn, Passports, Emails, UPI, IBAN) | `trustgate.pii.detectors` | `test_pii_international_types` | Planned (Phase 2) |
-| **8.5.4** | PII | Irreversible masking & salted HMAC tokenization | `trustgate.pii.masking` | `test_pii_masking_and_hmac_tokenization` | Planned (Phase 2) |
+| **8.5.1** | PII | Indian Aadhaar (12-digit with Verhoeff checksum) detection & rejection | `trustgate.pii.detectors` | `test_pii_aadhaar_verhoeff_checksum` | Implemented (Phase 2) |
+| **8.5.2** | PII | Indian PAN (`AAAAA9999A`) and Indian mobile phone formats (`+91`) | `trustgate.pii.detectors` | `test_pii_pan_and_indian_phones` | Implemented (Phase 2) |
+| **8.5.3** | PII | International PII (Credit cards via Luhn, Passports, Emails, UPI, IBAN) | `trustgate.pii.detectors` | `test_pii_international_types` | Implemented (Phase 2) |
+| **8.5.4** | PII | Irreversible masking & salted HMAC tokenization | `trustgate.pii.masking` | `test_pii_masking_and_hmac_tokenization` | Implemented (Phase 2) |
 | **8.5.5** | PII | Zero raw cell values sent to LLM prompt | `trustgate.agents.guardrails` | `test_llm_zero_raw_pii_leakage` | Planned (Phase 6) |
 | **8.6.1** | Repair | Repair worsens data (post-repair damage > pre-repair): rollback to quarantine | `trustgate.repair.planner` | `test_repair_rollback_on_degradation` | Planned (Phase 5) |
 | **8.6.2** | Repair | Reference-fitted imputation (forbidden to fit on corrupted batch) | `trustgate.repair.strategies` | `test_repair_imputer_fitted_on_reference_only` | Planned (Phase 5) |
