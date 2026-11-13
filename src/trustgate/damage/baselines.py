@@ -77,9 +77,7 @@ class MaxMetricDamageBaseline:
         outlier_part = X[:, 7] * 2.0
         return cast(
             np.ndarray,
-            np.asarray(
-                np.maximum(np.maximum(null_part, psi_part), outlier_part), dtype=np.float32
-            ),
+            np.asarray(np.maximum(np.maximum(null_part, psi_part), outlier_part), dtype=np.float32),
         )
 
     def predict(self, X: np.ndarray) -> np.ndarray:

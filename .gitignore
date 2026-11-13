@@ -23,6 +23,8 @@ wheels/
 *.egg
 
 # Testing and typing
+.cache/
+data/
 .mypy_cache/
 .pytest_cache/
 .hypothesis/

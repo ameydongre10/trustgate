@@ -79,10 +79,14 @@ class DamagePredictor:
             self.conformal.calibrate(y_true=y_calib, y_pred=calib_preds)
         else:
             # Self-calibrate on holdout slice if calibration set not passed separately
-            split_idx = int(len(X_tr) * 0.8)
-            if split_idx >= 10:
-                calib_preds = self.model.predict(X_tr[split_idx:])
-                self.conformal.calibrate(y_true=y_tr[split_idx:], y_pred=calib_preds)
+            n_samples = len(X_tr)
+            if n_samples >= 20:
+                n_calib = max(10, int(n_samples * 0.2))
+                calib_preds = self.model.predict(X_tr[-n_calib:])
+                self.conformal.calibrate(y_true=y_tr[-n_calib:], y_pred=calib_preds)
+            elif n_samples >= 10:
+                calib_preds = self.model.predict(X_tr)
+                self.conformal.calibrate(y_true=y_tr, y_pred=calib_preds)
 
         # 3. Fit OOD guard
         self.ood_guard.fit(X_tr)
