@@ -42,4 +42,4 @@ This matrix tracks the mapping between all explicit edge cases specified in Sect
 | **8.7.2** | Agents/LLM | Prompt injection in data values/headers: sanitized and non-influential on Judge | `trustgate.agents.guardrails` | `test_guardrails_prompt_injection_defense` | Implemented (Phase 6) |
 | **8.7.3** | Agents/LLM | Numeric claim verification: rejected hallucinated numbers in explanations | `trustgate.agents.verifier` | `test_numeric_claim_verifier_hallucination_trap` | Implemented (Phase 6) |
 | **8.8.1** | Policy | Deterministic policy evaluation & separation of duties | `trustgate.policy.engine` | `test_policy_decision_clean_batch_approve` | Implemented (Phase 5) |
-| **8.9.1** | Audit | Hash-chained log tampering detection via `verify` | `trustgate.audit.ledger` | `test_audit_hash_chain_tamper_detection` | Planned (Phase 7) |
+| **8.9.1** | Audit | Hash-chained log tampering detection via `verify` | `trustgate.audit.ledger` | `test_audit_hash_chain_tamper_detection` | Implemented (Phase 7) |
