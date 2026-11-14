@@ -78,20 +78,266 @@ def render_dashboard() -> None:
         st.session_state["backend_connected"] = True
         st.toast("Connected to TrustGate Agent Pipeline!", icon="🛡️")
 
-    queue = get_dashboard_queue()
+    # Editorial Brutalist / Institutional Authority Style Injection
+    st.markdown(
+        """
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
 
-    st.sidebar.title("🛡️ TrustGate")
-    st.sidebar.caption("Impact-Aware Data Trust & Verification Engine")
+        /* Root Typography & Architectural Theme */
+        html, body, [class*="css"] {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+            background-color: #09090b !important;
+            color: #f4f4f5 !important;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Enforce tabular numerals across all numbers and data tables */
+        * {
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Strict Architectural Zero/Low Radius (No Generic Bubbles) */
+        div[data-testid="stMetric"],
+        .stButton > button,
+        .stDownloadButton > button,
+        div[data-testid="stFileUploader"],
+        div[data-testid="stDataFrame"],
+        .stSelectbox,
+        .stTextInput,
+        .stTextArea,
+        .stAlert,
+        div[data-baseweb="tab-list"],
+        div[data-baseweb="tab"],
+        div[data-baseweb="select"] > div {
+            border-radius: 2px !important;
+        }
+
+        /* Editorial Institutional Masthead */
+        .editorial-masthead {
+            border: 1px solid #27272a;
+            background: #0f1013;
+            padding: 22px 26px;
+            margin-bottom: 24px;
+            border-left: 4px solid #f4f4f5;
+        }
+        .masthead-meta {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #a1a1aa;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .masthead-title {
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #ffffff;
+            line-height: 1.15;
+            margin-bottom: 6px;
+        }
+        .masthead-subtitle {
+            font-size: 13px;
+            color: #a1a1aa;
+            font-weight: 500;
+        }
+
+        /* High-Assurance Metric Cards */
+        div[data-testid="stMetric"] {
+            background-color: #121316 !important;
+            border: 1px solid #27272a !important;
+            padding: 16px 20px !important;
+            box-shadow: none !important;
+            border-top: 2px solid #52525b !important;
+        }
+        div[data-testid="stMetricLabel"] {
+            font-family: 'JetBrains Mono', monospace !important;
+            font-size: 11px !important;
+            letter-spacing: 0.08em !important;
+            text-transform: uppercase !important;
+            color: #a1a1aa !important;
+        }
+        div[data-testid="stMetricValue"] {
+            font-size: 32px !important;
+            font-weight: 800 !important;
+            color: #ffffff !important;
+            letter-spacing: -0.02em !important;
+        }
+
+        /* Brutalist High-Contrast Buttons */
+        .stButton > button[kind="primary"] {
+            background-color: #f4f4f5 !important;
+            color: #09090b !important;
+            font-weight: 800 !important;
+            border: 1px solid #ffffff !important;
+            font-family: 'JetBrains Mono', monospace !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.06em !important;
+            padding: 0.55rem 1.25rem !important;
+            transition: all 0.15s ease !important;
+        }
+        .stButton > button[kind="primary"]:hover {
+            background-color: #09090b !important;
+            color: #ffffff !important;
+            border-color: #ffffff !important;
+        }
+        .stButton > button[kind="primary"]:active {
+            transform: scale(0.97) !important;
+        }
+
+        .stButton > button[kind="secondary"],
+        .stDownloadButton > button {
+            background-color: #121316 !important;
+            color: #f4f4f5 !important;
+            border: 1px solid #3f3f46 !important;
+            font-weight: 600 !important;
+            font-family: 'JetBrains Mono', monospace !important;
+            text-transform: uppercase !important;
+            font-size: 12px !important;
+            letter-spacing: 0.04em !important;
+            transition: all 0.15s ease !important;
+        }
+        .stButton > button[kind="secondary"]:hover,
+        .stDownloadButton > button:hover {
+            background-color: #27272a !important;
+            border-color: #71717a !important;
+            color: #ffffff !important;
+        }
+        .stButton > button[kind="secondary"]:active,
+        .stDownloadButton > button:active {
+            transform: scale(0.97) !important;
+        }
+
+        /* Sidebar Monolith Styling */
+        section[data-testid="stSidebar"] {
+            background-color: #0c0d0f !important;
+            border-right: 1px solid #27272a !important;
+        }
+        .sidebar-monolith {
+            border: 1px solid #27272a;
+            background: #141519;
+            padding: 14px 16px;
+            margin-bottom: 20px;
+            border-left: 3px solid #10b981;
+        }
+        .sidebar-monolith-header {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            color: #10b981;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .sidebar-monolith-body {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: #71717a;
+            margin-top: 6px;
+            line-height: 1.55;
+        }
+
+        /* Architectural Tabs */
+        div[data-baseweb="tab-list"] {
+            border-bottom: 1px solid #27272a !important;
+            gap: 0px !important;
+        }
+        div[data-baseweb="tab"] {
+            border-bottom: 2px solid transparent !important;
+            font-family: 'JetBrains Mono', monospace !important;
+            font-size: 12px !important;
+            letter-spacing: 0.06em !important;
+            text-transform: uppercase !important;
+            color: #71717a !important;
+            padding: 10px 18px !important;
+        }
+        div[data-baseweb="tab"][aria-selected="true"] {
+            color: #ffffff !important;
+            border-bottom: 2px solid #ffffff !important;
+            background-color: #121316 !important;
+        }
+
+        /* Verdict Placards */
+        .verdict-placard {
+            border: 1px solid #27272a;
+            padding: 18px 22px;
+            margin: 18px 0;
+            background: #121316;
+        }
+        .verdict-placard.approve {
+            border-left: 4px solid #10b981;
+        }
+        .verdict-placard.quarantine {
+            border-left: 4px solid #ef4444;
+        }
+        .verdict-placard.escalate {
+            border-left: 4px solid #f59e0b;
+        }
+        .verdict-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        .verdict-tag.approve { color: #10b981; }
+        .verdict-tag.quarantine { color: #ef4444; }
+        .verdict-tag.escalate { color: #f59e0b; }
+        .verdict-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: #ffffff;
+            margin: 4px 0 8px 0;
+            letter-spacing: -0.01em;
+        }
+        .verdict-stats {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: #a1a1aa;
+            margin-bottom: 10px;
+        }
+        .verdict-text {
+            font-size: 13px;
+            color: #d4d4d8;
+            line-height: 1.6;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    queue = get_dashboard_queue()
 
     st.sidebar.markdown(
         """
-        <div style="background-color: #0f172a; padding: 10px; border-radius: 8px; border: 1px solid #334155; margin-bottom: 14px;">
-            <span style="color: #22c55e; font-weight: 600; font-size: 13px;">● Backend Online & Connected</span><br>
-            <span style="color: #94a3b8; font-size: 11px;">
-                Engine: Full-Stack Active<br>
-                Model: <code>credit_default_lgb</code><br>
-                Audit Chain: Cryptographically Intact
-            </span>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:18px; font-weight:800; letter-spacing:-0.02em; color:#ffffff; margin-bottom:2px;">
+            TRUSTGATE // 01
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:10px; color:#71717a; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:14px;">
+            DATA TRUST & GOVERNANCE
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.sidebar.markdown(
+        """
+        <div class="sidebar-monolith">
+            <div class="sidebar-monolith-header">
+                <span style="display:inline-block; width:7px; height:7px; background:#10b981; border-radius:50%; margin-right:4px;"></span>
+                SYSTEM ONLINE & AUDITED
+            </div>
+            <div class="sidebar-monolith-body">
+                CORE: FULL-STACK ACTIVE<br>
+                MODEL: <code>credit_default_lgb</code><br>
+                LEDGER: SHA-256 HASH VERIFIED
+            </div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -110,8 +356,19 @@ def render_dashboard() -> None:
     )
 
     st.sidebar.divider()
-    st.sidebar.markdown("**Target Downstream Model**")
-    st.sidebar.info("Model: `credit_default_lgb`\n\nMetric: `ROC-AUC`\n\nThreshold: `5.0% Damage`")
+    st.sidebar.markdown(
+        """
+        <div style="border: 1px solid #27272a; background: #121316; padding: 12px; border-radius: 2px;">
+            <div style="font-family:'JetBrains Mono',monospace; font-size:10px; color:#71717a; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">Target Model Spec</div>
+            <div style="font-size:13px; font-weight:700; color:#f4f4f5; margin-bottom:4px;">credit_default_lgb</div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#a1a1aa;">
+                METRIC: ROC-AUC<br>
+                TOLERANCE: &le; 5.0% Damage
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     if nav_option == "📊 Executive Overview":
         render_executive_overview(queue)
@@ -129,8 +386,19 @@ def render_dashboard() -> None:
 
 def render_executive_overview(queue: JobQueue) -> None:
     """Render executive KPI cards and decision analytics."""
-    st.header("Executive Governance Overview")
-    st.caption("Real-time pipeline health, risk avoidance, and downstream model protection")
+    st.markdown(
+        """
+        <div class="editorial-masthead">
+            <div class="masthead-meta">
+                <span>GOVERNANCE ENGINE // PROD-US-WEST</span>
+                <span>MODEL: CREDIT_DEFAULT_LGB • AUDIT: SHA-256 SECURED</span>
+            </div>
+            <div class="masthead-title">EXECUTIVE GOVERNANCE DISPATCH</div>
+            <div class="masthead-subtitle">High-assurance statistical validation, monotonic damage bounds & automated repair</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     jobs = queue.list_jobs()
     total_jobs = len(jobs)
@@ -214,7 +482,19 @@ def render_executive_overview(queue: JobQueue) -> None:
 
 def render_batch_inspector(queue: JobQueue) -> None:
     """Detailed inspection of single batch: SHAP, damage bounds, and repair diffs."""
-    st.header("Batch Inspector")
+    st.markdown(
+        """
+        <div class="editorial-masthead">
+            <div class="masthead-meta">
+                <span>DEEP INSPECTION // SHAP FACTOR ANALYSIS</span>
+                <span>CONFORMAL BOUND: 90% CONFIDENCE INTERVAL</span>
+            </div>
+            <div class="masthead-title">BATCH LEVEL FORENSICS & REPAIR</div>
+            <div class="masthead-subtitle">Detailed SHAP feature attributions, point vs bound damage, and closed-loop cell repair diffs</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     jobs = queue.list_jobs()
     if not jobs:
@@ -292,8 +572,19 @@ def render_batch_inspector(queue: JobQueue) -> None:
 
 def render_human_review_queue(queue: JobQueue) -> None:
     """Human-in-the-loop review station for escalated batches."""
-    st.header("Human Review & Escalation Queue")
-    st.caption("Batches flagged with out-of-distribution profiles or borderline risk thresholds")
+    st.markdown(
+        """
+        <div class="editorial-masthead">
+            <div class="masthead-meta">
+                <span>HUMAN-IN-THE-LOOP // ESCALATION STATION</span>
+                <span>PROTOCOL: OPERATOR SIGN-OFF & OVERRIDE</span>
+            </div>
+            <div class="masthead-title">HUMAN REVIEW & ESCALATION QUEUE</div>
+            <div class="masthead-subtitle">Batches flagged with out-of-distribution drift or critical decision risk boundaries</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     escalated_jobs = [
         j
@@ -344,8 +635,19 @@ def render_human_review_queue(queue: JobQueue) -> None:
 
 def render_audit_ledger(queue: JobQueue) -> None:
     """Tamper-evident ledger visualization and SHA-256 chain verification."""
-    st.header("Tamper-Evident Audit Ledger")
-    st.caption("Append-only SHA-256 cryptographic chain verifying complete governance lineage")
+    st.markdown(
+        """
+        <div class="editorial-masthead">
+            <div class="masthead-meta">
+                <span>CRYPTOGRAPHIC LEDGER // IMMUTABLE PROVENANCE</span>
+                <span>CIPHER: SHA-256 RECURSIVE HASH CHAIN</span>
+            </div>
+            <div class="masthead-title">TAMPER-EVIDENT AUDIT LEDGER</div>
+            <div class="masthead-subtitle">Append-only cryptographic chain verifying complete end-to-end data governance lineage</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     valid, violations = verify_audit_ledger(queue.ledger_file)
     entries = queue.audit_ledger.entries
@@ -392,11 +694,60 @@ def render_audit_ledger(queue: JobQueue) -> None:
         st.info("Ledger is currently at Genesis state. Process a batch to write first block.")
 
 
+def _render_verdict_placard(job: JobRecord) -> None:
+    """Render high-contrast brutalist verdict placard for evaluated batch."""
+    r_score = job.risk_score or 0.0
+    d_upper = (job.damage_upper or 0.0) * 100.0
+    dec = job.decision or "UNKNOWN"
+
+    if "APPROVE" in dec and "REPAIR" not in dec:
+        css_class = "approve"
+        status_label = "VERIFIED_SAFE // COMPLIANT"
+    elif "ESCALATE" in dec or "REPAIR" in dec:
+        css_class = "escalate"
+        status_label = "ATTENTION_REQUIRED // BOUNDARY_ALERT"
+    else:
+        css_class = "quarantine"
+        status_label = "RISK_CONTAINMENT // QUARANTINED"
+
+    expl = (
+        job.explanation
+        or "Deterministic governance policy executed. Batch is profiled, impact evaluated, and indexed in the cryptographic audit ledger."
+    )
+
+    st.markdown(
+        f"""
+        <div class="verdict-placard {css_class}">
+            <div class="verdict-tag {css_class}">[DECISION // {status_label}]</div>
+            <div class="verdict-title">{dec}</div>
+            <div class="verdict-stats">
+                BATCH: <code>{job.batch_id}</code> &nbsp;•&nbsp; 
+                RISK INDEX: <strong>{r_score:.1f}/100</strong> &nbsp;•&nbsp; 
+                DAMAGE BOUND: <strong>&le; {d_upper:.1f}% ROC-AUC</strong>
+            </div>
+            <div class="verdict-text">
+                {expl}
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 def render_quick_simulator(queue: JobQueue) -> None:
     """Test TrustGate live using either custom CSV upload or pre-built corruption scenarios."""
-    st.header("⚡ Live Testing & Batch Simulator")
-    st.caption(
-        "Upload custom CSV files or generate synthetic corruptions to test TrustGate detection, damage prediction, and repair live"
+    st.markdown(
+        """
+        <div class="editorial-masthead">
+            <div class="masthead-meta">
+                <span>SIMULATOR // REAL-TIME INGESTION</span>
+                <span>SCHEMA: TABULAR_CREDIT • VALIDATION: MONOTONIC CALIBRATED</span>
+            </div>
+            <div class="masthead-title">LIVE TESTING & BATCH SIMULATOR</div>
+            <div class="masthead-subtitle">Upload custom tabular CSV files or execute simulated real-world corruptions</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
 
     tab_upload, tab_presets = st.tabs(["📁 Upload Custom CSV File", "⚡ Synthetic Scenarios & Presets"])
@@ -467,14 +818,7 @@ def render_quick_simulator(queue: JobQueue) -> None:
                             st.error(f"Processing failed: {job.error}")
                         else:
                             st.success(f"Batch {job.batch_id} successfully evaluated!")
-                            r_score = job.risk_score or 0.0
-                            d_upper = (job.damage_upper or 0.0) * 100.0
-                            st.info(
-                                f"Verdict: **{job.decision}** | Risk Score: **{r_score:.1f}/100** | Damage Upper: **{d_upper:.1f}%**"
-                            )
-                            if job.explanation:
-                                st.markdown("### AI Governance Rationale")
-                                st.markdown(job.explanation)
+                            _render_verdict_placard(job)
             except Exception as e:
                 st.error(f"Failed to read CSV file: {e}")
 
@@ -528,20 +872,24 @@ def render_quick_simulator(queue: JobQueue) -> None:
                     time.sleep(0.1)
 
                 st.success(f"Batch {job.batch_id} processed!")
-                r_score = job.risk_score or 0.0
-                d_upper = (job.damage_upper or 0.0) * 100.0
-                st.info(
-                    f"Verdict: **{job.decision}** | Risk Score: **{r_score:.1f}/100** | Damage Upper: **{d_upper:.1f}%**"
-                )
-                if job.explanation:
-                    st.markdown("### AI Governance Rationale")
-                    st.markdown(job.explanation)
+                _render_verdict_placard(job)
 
 
 def render_api_explorer(queue: JobQueue) -> None:
     """Unified API Explorer allowing full inspection and testing of REST endpoints in one URL."""
-    st.header("🔌 API & Endpoints Explorer")
-    st.caption("Interact with TrustGate REST endpoints, inspect payloads, and view live OpenAPI schemas.")
+    st.markdown(
+        """
+        <div class="editorial-masthead">
+            <div class="masthead-meta">
+                <span>API EXPLORER // REST INTEGRATION</span>
+                <span>SPECIFICATION: OPENAPI 3.1 • RBAC ENFORCED</span>
+            </div>
+            <div class="masthead-title">API & ENDPOINTS EXPLORER</div>
+            <div class="masthead-subtitle">Live inspection of production endpoints, payload schemas, and programmatic pipeline integration</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     # Status summary
     col1, col2, col3 = st.columns(3)
