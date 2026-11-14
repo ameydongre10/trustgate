@@ -2,13 +2,22 @@
 
 [![CI Status](https://img.shields.io/badge/CI-Passing-brightgreen.svg)]()
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)]()
-[![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)]()
+[![License: Proprietary](https://img.shields.io/badge/License-Proprietary_All_Rights_Reserved-red.svg)](LICENSE)
 [![Type Checked: mypy](https://img.shields.io/badge/type_checker-mypy_strict-blue.svg)]()
 [![Linting: ruff](https://img.shields.io/badge/linter-ruff-000000.svg)]()
 [![Tests: 98 Passed](https://img.shields.io/badge/tests-98_passed-success.svg)]()
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/ameydongre10/trustgate)
 
 > **TrustGate** is an enterprise data trust and verification agent that protects downstream ML models and analytical pipelines by predicting the downstream degradation caused by data corruption, rather than counting arbitrary rule violations.
+
+---
+
+## 🌐 Single Live Public URL
+
+Access the entire full-stack TrustGate engine smoothly through the unified live console:
+
+### 👉 **[https://trustgate-ui.onrender.com](https://trustgate-ui.onrender.com)**
+
+*(Runs full-stack: Executive KPI Dashboard, Real-time Batch Inspector with TreeSHAP factor attributions, Human Review Queue, Append-Only SHA-256 Audit Ledger, Quick Batch Simulator, and REST API Explorer — zero black screens, smooth connection sequence, and instant pre-seeded interactive data).*
 
 ---
 
@@ -191,6 +200,18 @@ make ui         # Start the Streamlit dashboard
 
 ---
 
-## 8. License
+## 8. License & Intellectual Property Protection
 
-Apache-2.0. Built for enterprise data governance and trustworthy machine learning pipelines.
+**Copyright © 2026 ameydongre10 (Amey Dongre). All Rights Reserved.**
+
+This repository, source code, neural algorithms, model architectures, simulator engines, and governance systems are the exclusive proprietary intellectual property of **@ameydongre10**.
+
+> [!CAUTION]
+> ### AUTOMATIC COPYRIGHT STRIKE & DMCA ENFORCEMENT NOTICE
+> **Unauthorized copying, forking, scraping, mirroring, re-distribution, or commercial exploitation is strictly prohibited.**
+>
+> - **Immediate Automatic Strike**: Any unauthorized copy, mirror, or derivative work discovered on GitHub will receive an immediate, expedited **Digital Millennium Copyright Act (DMCA) Notice of Infringement under 17 U.S.C. § 512(c)**, resulting in the permanent removal of the repository and an **official Copyright Strike** applied against the offending user account.
+> - **Hosting Suspension**: Takedown demands will simultaneously be transmitted to all cloud hosting providers (Render, Vercel, Railway, AWS, GCP, etc.) hosting unauthorized instances, triggering immediate service termination.
+> - **Cryptographic Provenance**: The codebase contains proprietary SHA-256 hash chains, deterministic seed signatures, and embedded digital fingerprints providing mathematical proof of authorship and origin.
+
+For licensing inquiries or commercial use, contact: **[@ameydongre10](https://github.com/ameydongre10)**.

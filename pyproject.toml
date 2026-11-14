@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "Impact-Aware Data Trust and Verification Agent"
 readme = "README.md"
 requires-python = ">=3.11"
-license = { text = "Apache-2.0" }
+license = { text = "Proprietary. Copyright (c) 2026 ameydongre10. All Rights Reserved." }
 authors = [
     { name = "TrustGate Team" }
 ]

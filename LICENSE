@@ -1,0 +1,56 @@
+PROPRIETARY AND CONFIDENTIAL INTELLECTUAL PROPERTY LICENSE
+=============================================================
+Copyright (c) 2026 ameydongre10 (Amey Dongre). All Rights Reserved.
+
+NOTICE TO ALL USERS AND THIRD PARTIES:
+This software, source code, neural network architecture, deterministic policy 
+algorithms, mathematical formulations, documentation, and user interfaces 
+(collectively, the "Software") are the exclusive intellectual property of the 
+Author (ameydongre10).
+
+1. NO LICENSE GRANTED
+This repository is published publicly solely for demonstration, inspection, 
+and portfolio review purposes. NO LICENSE is granted to any person, corporation, 
+or entity to copy, fork, modify, merge, publish, distribute, sublicense, re-host, 
+sell, or commercially exploit any portion of this Software without express, prior, 
+written authorization executed by the copyright holder.
+
+2. STRICT PROHIBITION AGAINST UNAUTHORIZED REPRODUCTION
+You may NOT:
+a) Copy, clone, duplicate, or mirror this codebase (in whole or in part) into any 
+   public or private repository, server, or cloud hosting platform.
+b) Claim authorship, remove copyright notices, or repackage this project under 
+   any other name, persona, or organization.
+c) Scrape, train, or incorporate this codebase or its synthetic dataset simulations 
+   into commercial products or competing services.
+
+3. AUTOMATIC COPYRIGHT STRIKE & DMCA ENFORCEMENT NOTICE
+ANY UNAUTHORIZED COPYING, FORKING, HOSTING, RE-DISTRIBUTION, OR DERIVATIVE USE 
+OF THIS CODEBASE WILL BE MET WITH IMMEDIATE LEGAL AND ADMINISTRATIVE ENFORCEMENT:
+
+a) AUTOMATIC GITHUB COPYRIGHT STRIKE:
+   An expedited Digital Millennium Copyright Act (DMCA) Notice of Infringement 
+   pursuant to 17 U.S.C. § 512(c) will be immediately submitted to GitHub Inc. 
+   and its parent entities. This results in the permanent removal of the infringing 
+   repository and an official Copyright Strike applied against the offending user account.
+
+b) HOSTING PROVIDER TAKEDOWN:
+   Formal takedown demands will be transmitted simultaneously to any cloud provider 
+   (Render, Vercel, Railway, AWS, GCP, Hugging Face, etc.) hosting unauthorized copies, 
+   triggering immediate service suspension.
+
+c) DIGITAL FINGERPRINTING & AUDIT INTEGRITY:
+   This codebase contains proprietary cryptographic hash-chain signatures, 
+   deterministic random-seed fingerprints, and architectural markers that provide 
+   irrefutable mathematical proof of authorship and origin.
+
+4. DISCLAIMER OF WARRANTIES
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
+AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM 
+THE USE OF THIS SOFTWARE.
+
+For licensing inquiries or commercial permissions, contact:
+GitHub: @ameydongre10
+Repository: https://github.com/ameydongre10/trustgate
