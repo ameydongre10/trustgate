@@ -6,6 +6,7 @@
 [![Type Checked: mypy](https://img.shields.io/badge/type_checker-mypy_strict-blue.svg)]()
 [![Linting: ruff](https://img.shields.io/badge/linter-ruff-000000.svg)]()
 [![Tests: 98 Passed](https://img.shields.io/badge/tests-98_passed-success.svg)]()
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/ameydongre10/trustgate)
 
 > **TrustGate** is an enterprise data trust and verification agent that protects downstream ML models and analytical pipelines by predicting the downstream degradation caused by data corruption, rather than counting arbitrary rule violations.
 
