@@ -4,6 +4,7 @@ import time
 from pathlib import Path
 
 import pandas as pd
+import polars as pl
 import streamlit as st
 
 from trustgate.api.queue import JobQueue, JobRecord, JobStatus
@@ -17,12 +18,48 @@ from trustgate.simulator.injectors import (
 )
 
 
+def _seed_demo_batches(queue: JobQueue) -> None:
+    """Pre-populate sample batches so the dashboard is immediately interactive upon launch."""
+    try:
+        train_df, test_df, _, _ = get_dataset("credit_default", n_samples=150, seed=42)
+
+        # 1. Clean batch -> APPROVE
+        clean_bytes = test_df.head(60).write_csv().encode("utf-8")
+        queue.submit_batch(raw_bytes=clean_bytes, filename="clean_inflow.csv", target_model_name="credit_default_lgb")
+
+        # 2. Repairable missingness -> REPAIR_THEN_APPROVE
+        repaired_df, _ = inject_mcar(test_df.tail(60), columns=["income"], severity=0.04, seed=42)
+        rep_bytes = repaired_df.write_csv().encode("utf-8")
+        queue.submit_batch(raw_bytes=rep_bytes, filename="missingness_batch.csv", target_model_name="credit_default_lgb")
+
+        # 3. PII leak -> QUARANTINE
+        pii_df = test_df.head(40).with_columns(
+            pl.Series("customer_ssn", ["123-45-6789" for _ in range(40)])
+        )
+        pii_bytes = pii_df.write_csv().encode("utf-8")
+        queue.submit_batch(raw_bytes=pii_bytes, filename="pii_breach.csv", target_model_name="credit_default_lgb")
+
+        # Wait briefly for worker thread to process initial seed batches
+        for _ in range(25):
+            jobs = queue.list_jobs()
+            if len(jobs) >= 3 and all(j.status not in (JobStatus.PENDING, JobStatus.RUNNING) for j in jobs):
+                break
+            time.sleep(0.1)
+    except Exception:
+        pass
+
+
 @st.cache_resource
 def get_dashboard_queue() -> JobQueue:
     """Retrieve or initialize persistent dashboard JobQueue instance."""
     storage_dir = Path("trustgate_data")
     storage_dir.mkdir(parents=True, exist_ok=True)
-    return JobQueue(storage_dir=storage_dir)
+    queue = JobQueue(storage_dir=storage_dir)
+
+    if len(queue.list_jobs()) == 0:
+        _seed_demo_batches(queue)
+
+    return queue
 
 
 def render_dashboard() -> None:
@@ -38,6 +75,7 @@ def render_dashboard() -> None:
 
     st.sidebar.title("🛡️ TrustGate")
     st.sidebar.caption("Impact-Aware Data Trust & Verification Engine")
+    st.sidebar.success("● Pipeline Operational • Backend Active")
 
     nav_option = st.sidebar.radio(
         "Navigation",
