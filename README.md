@@ -11,13 +11,40 @@
 
 ---
 
-## 🌐 Single Live Public URL
+## 🌐 Single Live Public URL & Custom Dataset Evaluation
 
 Access the entire full-stack TrustGate engine smoothly through the unified live console:
 
 ### 👉 **[https://trustgate-ui.onrender.com](https://trustgate-ui.onrender.com)**
 
-*(Runs full-stack: Executive KPI Dashboard, Real-time Batch Inspector with TreeSHAP factor attributions, Human Review Queue, Append-Only SHA-256 Audit Ledger, Quick Batch Simulator, and REST API Explorer — zero black screens, smooth connection sequence, and instant pre-seeded interactive data).*
+*(Runs full-stack: Executive KPI Dashboard, Real-time Batch Inspector with TreeSHAP factor attributions, Human Review Queue, Append-Only SHA-256 Audit Ledger, Custom CSV Upload & Quick Batch Simulator, and REST API Explorer — zero black screens, smooth connection sequence, and instant pre-seeded interactive data).*
+
+---
+
+### 🧪 How to Test TrustGate Live with Custom Datasets (Step-by-Step)
+
+TrustGate allows anyone (operators, interviewers, expo attendees) to test the governance pipeline live with their **own custom CSV files** or built-in corrupted benchmarks:
+
+```
+Step 1: Open https://trustgate-ui.onrender.com in any web browser.
+Step 2: In the left sidebar, click "⚡ Quick Batch Simulator".
+Step 3: Click on the "📁 Upload Custom CSV File" tab.
+Step 4: (Optional) If you don't have a CSV handy, click "📥 Download Sample Clean CSV" or "📥 Download Sample Corrupted CSV".
+Step 5: Drag and drop your `.csv` file into the upload zone.
+Step 6: Review the instant 6-row table preview (showing row count and column structure).
+Step 7: Click "🚀 Analyze & Process Uploaded Batch".
+```
+
+#### 📊 What TrustGate Returns in Real-Time:
+1. **Deterministic Governance Verdict**:
+   * `APPROVE` — Batch is safe; predicted downstream impact is within tolerance ($\le 5\%$).
+   * `REPAIR_THEN_APPROVE` — Corruptions (e.g. missing values) were repaired automatically within risk budget.
+   * `QUARANTINE` — Severe degradation predicted ($> 20\%$) or hard PII/security contract breached.
+   * `ESCALATE_TO_HUMAN` — Out-of-distribution drift or boundary-level risk routed to human operator.
+2. **Calibrated Risk Score**: Normalized risk index between `0.0` and `100.0`.
+3. **Predicted Model Damage Upper Bound**: Conformal $90\%$ confidence upper bound on metric loss (e.g., `11.9% ROC-AUC loss`).
+4. **AI Governance Rationale**: Plain-English explainability narrative generated and verified by anti-hallucination regex guards.
+5. **Cryptographic Proof**: Switch to **`📜 Audit Ledger & Lineage`** to verify that your uploaded batch's decision has been recorded into the SHA-256 immutable ledger with a unique sequence number and parent hash.
 
 ---
 
