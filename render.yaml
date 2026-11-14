@@ -4,6 +4,7 @@ services:
     name: trustgate-ui
     runtime: python
     plan: free
+    autoDeploy: true
     buildCommand: pip install --upgrade pip && pip install -e .
     startCommand: streamlit run src/trustgate/ui/dashboard.py --server.port $PORT --server.address 0.0.0.0
     envVars:
@@ -17,6 +18,7 @@ services:
     name: trustgate-api
     runtime: python
     plan: free
+    autoDeploy: true
     buildCommand: pip install --upgrade pip && pip install -e .
     startCommand: uvicorn trustgate.api.app:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /healthz
