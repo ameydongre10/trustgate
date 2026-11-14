@@ -1,0 +1,27 @@
+services:
+  # 1. TrustGate Interactive Streamlit Operator Dashboard
+  - type: web
+    name: trustgate-ui
+    runtime: python
+    plan: free
+    buildCommand: pip install --upgrade pip && pip install -e .
+    startCommand: streamlit run src/trustgate/ui/dashboard.py --server.port $PORT --server.address 0.0.0.0
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.10
+      - key: TRUSTGATE_ENV
+        value: production
+
+  # 2. TrustGate Production FastAPI Backend & REST API
+  - type: web
+    name: trustgate-api
+    runtime: python
+    plan: free
+    buildCommand: pip install --upgrade pip && pip install -e .
+    startCommand: uvicorn trustgate.api.app:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /healthz
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.10
+      - key: TRUSTGATE_ENV
+        value: production
