@@ -393,63 +393,149 @@ def render_audit_ledger(queue: JobQueue) -> None:
 
 
 def render_quick_simulator(queue: JobQueue) -> None:
-    """Generate sample synthetic batches to test TrustGate live."""
-    st.header("⚡ Quick Batch Simulator")
+    """Test TrustGate live using either custom CSV upload or pre-built corruption scenarios."""
+    st.header("⚡ Live Testing & Batch Simulator")
     st.caption(
-        "Generate synthetic dirty batches to test TrustGate detection, damage prediction, and repair live"
+        "Upload custom CSV files or generate synthetic corruptions to test TrustGate detection, damage prediction, and repair live"
     )
 
-    _, test_df, spec, ref_stats = get_dataset(
-        "credit_default", n_samples=150, seed=int(time.time())
-    )
+    tab_upload, tab_presets = st.tabs(["📁 Upload Custom CSV File", "⚡ Synthetic Scenarios & Presets"])
 
-    corruption_type = st.selectbox(
-        "Select Corruption Scenario:",
-        [
-            "Clean Data (Benchmark Baseline)",
-            "High Null Rates in Key Columns (MCAR 25%)",
-            "Severe Covariate Drift (Mean Shift +3.5 SD)",
-            "Extreme Outlier Spikes (Income/Loan x100)",
-        ],
-    )
+    with tab_upload:
+        st.subheader("Upload Your Own Tabular Dataset")
+        st.write(
+            "Drop your custom batch CSV file here to run real-time schema profiling, risk scoring, "
+            "and downstream model damage prediction."
+        )
 
-    if st.button("Generate & Process Batch"):
-        with st.spinner("Injecting corruptions and running TrustGate Agent Workflow..."):
-            corrupted_df = test_df
-            if "MCAR" in corruption_type:
-                corrupted_df, _ = inject_mcar(
-                    corrupted_df, ["debt", "credit_score"], severity=0.25, seed=42
-                )
-            elif "Mean Shift" in corruption_type:
-                corrupted_df, _ = inject_mean_shift(
-                    corrupted_df, ["credit_score"], shift_stds=3.5, seed=42
-                )
-            elif "Outlier" in corruption_type:
-                corrupted_df, _ = inject_outliers_and_sentinels(
-                    corrupted_df, ["income", "debt"], severity=0.15, seed=42
-                )
-
-            # Convert to CSV bytes and submit
-            csv_buf = corrupted_df.write_csv()
-            job = queue.submit_batch(
-                raw_bytes=csv_buf.encode("utf-8"),
-                filename="simulated_batch.csv",
-                target_model_name="credit_default_lgb",
+        # Pre-generated sample downloads for expo visitors
+        try:
+            _, sample_clean_df, _, _ = get_dataset("credit_default", n_samples=60, seed=123)
+            sample_dirty_df, _ = inject_outliers_and_sentinels(
+                sample_clean_df, ["income", "debt"], severity=0.25, seed=99
             )
-
-            # Wait briefly for execution
-            for _ in range(30):
-                if job.status not in (JobStatus.PENDING, JobStatus.RUNNING):
-                    break
-                time.sleep(0.1)
-
-            st.success(f"Batch {job.batch_id} processed!")
-            r_score = job.risk_score or 0.0
-            d_upper = (job.damage_upper or 0.0) * 100.0
-            st.info(
-                f"Verdict: **{job.decision}** | Risk Score: **{r_score:.1f}/100** | Damage Upper: **{d_upper:.1f}%**"
+            c1, c2 = st.columns(2)
+            c1.download_button(
+                "📥 Download Sample Clean CSV",
+                data=sample_clean_df.write_csv(),
+                file_name="sample_clean_batch.csv",
+                mime="text/csv",
+                help="Test with a compliant, clean benchmark dataset",
             )
-            st.markdown(job.explanation or "")
+            c2.download_button(
+                "📥 Download Sample Corrupted CSV",
+                data=sample_dirty_df.write_csv(),
+                file_name="sample_corrupted_batch.csv",
+                mime="text/csv",
+                help="Test with an anomaly/corrupted dataset to see quarantine & risk scoring",
+            )
+        except Exception:
+            pass
+
+        st.markdown("---")
+
+        uploaded_file = st.file_uploader(
+            "Choose a CSV file to evaluate",
+            type=["csv"],
+            help="Upload a tabular CSV file to evaluate with TrustGate",
+            key="custom_csv_uploader",
+        )
+
+        if uploaded_file is not None:
+            raw_bytes = uploaded_file.getvalue()
+            try:
+                preview_df = pd.read_csv(uploaded_file)
+                st.write(
+                    f"**File:** `{uploaded_file.name}` | **Rows:** {len(preview_df)} | **Columns:** {len(preview_df.columns)}"
+                )
+                st.dataframe(preview_df.head(6), use_container_width=True)
+
+                if st.button("🚀 Analyze & Process Uploaded Batch", type="primary", key="btn_process_upload"):
+                    with st.spinner("Analyzing uploaded file, profiling drift & calculating model damage..."):
+                        job = queue.submit_batch(
+                            raw_bytes=raw_bytes,
+                            filename=uploaded_file.name,
+                            target_model_name="credit_default_lgb",
+                        )
+
+                        for _ in range(40):
+                            if job.status not in (JobStatus.PENDING, JobStatus.RUNNING):
+                                break
+                            time.sleep(0.1)
+
+                        if job.status == JobStatus.FAILED:
+                            st.error(f"Processing failed: {job.error}")
+                        else:
+                            st.success(f"Batch {job.batch_id} successfully evaluated!")
+                            r_score = job.risk_score or 0.0
+                            d_upper = (job.damage_upper or 0.0) * 100.0
+                            st.info(
+                                f"Verdict: **{job.decision}** | Risk Score: **{r_score:.1f}/100** | Damage Upper: **{d_upper:.1f}%**"
+                            )
+                            if job.explanation:
+                                st.markdown("### AI Governance Rationale")
+                                st.markdown(job.explanation)
+            except Exception as e:
+                st.error(f"Failed to read CSV file: {e}")
+
+    with tab_presets:
+        st.subheader("Synthetic Scenario Presets")
+        st.caption("One-click benchmark datasets with simulated real-world corruptions")
+
+        _, test_df, spec, ref_stats = get_dataset(
+            "credit_default", n_samples=150, seed=int(time.time())
+        )
+
+        corruption_type = st.selectbox(
+            "Select Corruption Scenario:",
+            [
+                "Clean Data (Benchmark Baseline)",
+                "High Null Rates in Key Columns (MCAR 25%)",
+                "Severe Covariate Drift (Mean Shift +3.5 SD)",
+                "Extreme Outlier Spikes (Income/Loan x100)",
+            ],
+            key="preset_select",
+        )
+
+        if st.button("Generate & Process Preset Batch", key="btn_process_preset"):
+            with st.spinner("Injecting corruptions and running TrustGate Agent Workflow..."):
+                corrupted_df = test_df
+                if "MCAR" in corruption_type:
+                    corrupted_df, _ = inject_mcar(
+                        corrupted_df, ["debt", "credit_score"], severity=0.25, seed=42
+                    )
+                elif "Mean Shift" in corruption_type:
+                    corrupted_df, _ = inject_mean_shift(
+                        corrupted_df, ["credit_score"], shift_stds=3.5, seed=42
+                    )
+                elif "Outlier" in corruption_type:
+                    corrupted_df, _ = inject_outliers_and_sentinels(
+                        corrupted_df, ["income", "debt"], severity=0.15, seed=42
+                    )
+
+                # Convert to CSV bytes and submit
+                csv_buf = corrupted_df.write_csv()
+                job = queue.submit_batch(
+                    raw_bytes=csv_buf.encode("utf-8"),
+                    filename="simulated_batch.csv",
+                    target_model_name="credit_default_lgb",
+                )
+
+                # Wait briefly for execution
+                for _ in range(30):
+                    if job.status not in (JobStatus.PENDING, JobStatus.RUNNING):
+                        break
+                    time.sleep(0.1)
+
+                st.success(f"Batch {job.batch_id} processed!")
+                r_score = job.risk_score or 0.0
+                d_upper = (job.damage_upper or 0.0) * 100.0
+                st.info(
+                    f"Verdict: **{job.decision}** | Risk Score: **{r_score:.1f}/100** | Damage Upper: **{d_upper:.1f}%**"
+                )
+                if job.explanation:
+                    st.markdown("### AI Governance Rationale")
+                    st.markdown(job.explanation)
 
 
 def render_api_explorer(queue: JobQueue) -> None:
