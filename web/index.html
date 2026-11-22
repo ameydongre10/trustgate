@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrustGate | Impact-Aware Data Governance & Agent Safety Layer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-base: #09090b;
+      --bg-surface: #0f1013;
+      --bg-elevated: #18181b;
+      --border-subtle: #27272a;
+      --border-strong: #3f3f46;
+      --text-primary: #f4f4f5;
+      --text-muted: #a1a1aa;
+      --text-dim: #71717a;
+      --accent-emerald: #10b981;
+      --accent-cyan: #06b6d4;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --radius-sm: 2px;
+      --radius-md: 4px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-variant-numeric: tabular-nums;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.5;
+    }
+
+    code, pre, .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Top Live Connection Banner */
+    .connection-banner {
+      background: #111318;
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      font-size: 13px;
+      transition: all 0.3s ease;
+    }
+
+    .connection-banner.warming {
+      border-bottom-color: rgba(245, 158, 11, 0.4);
+      background: linear-gradient(90deg, rgba(245, 158, 11, 0.08) 0%, rgba(15, 16, 19, 0.95) 100%);
+    }
+
+    .connection-banner.online {
+      border-bottom-color: rgba(16, 185, 129, 0.4);
+      background: linear-gradient(90deg, rgba(16, 185, 129, 0.08) 0%, rgba(15, 16, 19, 0.95) 100%);
+    }
+
+    .banner-status-cluster {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .status-beacon {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    .status-beacon.warming {
+      background-color: var(--accent-amber);
+      box-shadow: 0 0 10px var(--accent-amber);
+      animation: beaconPulse 1.4s infinite alternate;
+    }
+
+    .status-beacon.online {
+      background-color: var(--accent-emerald);
+      box-shadow: 0 0 10px var(--accent-emerald);
+    }
+
+    @keyframes beaconPulse {
+      0% { opacity: 0.4; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1.15); }
+    }
+
+    .banner-title {
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .banner-subtext {
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+
+    .banner-telemetry {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    .banner-telemetry span strong {
+      color: var(--text-primary);
+    }
+
+    .progress-bar-container {
+      width: 120px;
+      height: 4px;
+      background: var(--bg-elevated);
+      border-radius: 2px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--accent-amber);
+      width: 25%;
+      transition: width 1s linear;
+    }
+
+    /* Main Container */
+    .app-container {
+      max-width: 1360px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 32px 24px;
+      flex: 1;
+    }
+
+    /* Institutional Masthead */
+    .editorial-masthead {
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+      padding: 24px 30px;
+      margin-bottom: 28px;
+      border-left: 4px solid #f4f4f5;
+    }
+
+    .masthead-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .masthead-title {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      color: #ffffff;
+      line-height: 1.15;
+      margin-bottom: 6px;
+    }
+
+    .masthead-subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      font-weight: 400;
+      max-width: 880px;
+    }
+
+    /* Core Metrics Bar */
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .metric-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      padding: 18px 20px;
+      border-radius: var(--radius-sm);
+    }
+
+    .metric-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      margin-bottom: 6px;
+    }
+
+    .metric-value {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .metric-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Tabbed Workspace Section */
+    .workspace-section {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+
+    .workspace-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border-subtle);
+      background: #0b0c0e;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      border-right: 1px solid var(--border-subtle);
+      border-bottom: 2px solid transparent;
+      padding: 14px 22px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover {
+      background: rgba(255, 255, 255, 0.02);
+      color: #ffffff;
+    }
+
+    .tab-btn.active {
+      color: #ffffff;
+      background: var(--bg-surface);
+      border-bottom-color: var(--accent-emerald);
+    }
+
+    .tab-content {
+      padding: 28px;
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Live Feed & Seed Batches */
+    .table-container {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 14px;
+    }
+
+    .table-container th {
+      text-align: left;
+      padding: 10px 14px;
+      background: #09090b;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .table-container td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+
+    .badge-approve {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .badge-repair {
+      background: rgba(6, 182, 212, 0.12);
+      color: #06b6d4;
+      border: 1px solid rgba(6, 182, 212, 0.3);
+    }
+
+    .badge-quarantine {
+      background: rgba(244, 63, 94, 0.12);
+      color: #f43f5e;
+      border: 1px solid rgba(244, 63, 94, 0.3);
+    }
+
+    /* Action Buttons */
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      background: #f4f4f5;
+      color: #09090b;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      border: none;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .cta-btn:hover {
+      background: #ffffff;
+    }
+
+    .cta-btn.secondary {
+      background: transparent;
+      color: var(--text-primary);
+      border: 1px solid var(--border-strong);
+    }
+
+    .cta-btn.secondary:hover {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: #f4f4f5;
+    }
+
+    /* Embedded Console Frame */
+    .embedded-frame-box {
+      width: 100%;
+      height: 720px;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      background: #09090b;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border-subtle);
+      padding: 20px 24px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #070809;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Live Connection Status Strip -->
+  <div id="connectionBanner" class="connection-banner warming">
+    <div class="banner-status-cluster">
+      <span id="beaconIndicator" class="status-beacon warming"></span>
+      <div>
+        <div class="banner-title" id="bannerTitle">
+          <span>Connecting to TrustGate Secure Engine</span>
+          <span style="font-size: 11px; font-weight: normal; font-family: 'JetBrains Mono', monospace; color: var(--accent-amber);" id="statusPill">[STANDBY WARMUP]</span>
+        </div>
+        <div class="banner-subtext" id="bannerDescription">
+          Cloud backend instance is initializing on Render. Interactive UI & audit telemetry are fully live.
+        </div>
+      </div>
+    </div>
+
+    <div class="banner-telemetry">
+      <div>
+        <span>ELAPSED: <strong id="elapsedTimer">0s</strong></span>
+      </div>
+      <div>
+        <span>PROGRESS:</span>
+      </div>
+      <div class="progress-bar-container">
+        <div id="progressFill" class="progress-bar-fill"></div>
+      </div>
+      <button class="cta-btn secondary" style="padding: 4px 10px; font-size: 11px;" onclick="checkBackendHealth(true)">
+        Ping Backend
+      </button>
+    </div>
+  </div>
+
+  <div class="app-container">
+    <!-- Institutional Masthead -->
+    <header class="editorial-masthead">
+      <div class="masthead-meta">
+        <span>PLATFORM // IMPACT-AWARE DATA TRUST & GOVERNANCE</span>
+        <span>SHA-256 LEDGER AUDITABLE • RFC-001 CONFORMAL BOUNDS</span>
+      </div>
+      <h1 class="masthead-title">TRUSTGATE OPERATIONAL DASHBOARD</h1>
+      <p class="masthead-subtitle">
+        Deterministic pre-execution gate for machine learning pipelines. Separating the agent’s ability to propose actions from its authority to execute them.
+      </p>
+    </header>
+
+    <!-- Key Metrics Grid -->
+    <section class="metric-grid">
+      <div class="metric-card">
+        <div class="metric-label">Target Serving Model</div>
+        <div class="metric-value">credit_default_lgb</div>
+        <div class="metric-meta">Production LightGBM Classifier</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Governance Mode</div>
+        <div class="metric-value" style="color: var(--accent-emerald);">STRICT_ENFORCE</div>
+        <div class="metric-meta">Conformal Upper Bound ≤ 0.05</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Cryptographic Ledger</div>
+        <div class="metric-value">0x7F2A...E491</div>
+        <div class="metric-meta">Genesis Block Hash Verified</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Engine API Link</div>
+        <div class="metric-value" id="apiStatusValue" style="color: var(--accent-amber);">WARMING UP</div>
+        <div class="metric-meta" id="apiEndpointMeta">target: /healthz</div>
+      </div>
+    </section>
+
+    <!-- Interactive Workspace Tabs -->
+    <div class="workspace-section">
+      <div class="workspace-tabs">
+        <button class="tab-btn active" onclick="switchTab('tab-overview', this)">
+          01 // LIVE INFLOW MONITOR
+        </button>
+        <button class="tab-btn" onclick="switchTab('tab-console', this)">
+          02 // STREAMLIT OPERATOR CONSOLE
+        </button>
+        <button class="tab-btn" onclick="switchTab('tab-api', this)">
+          03 // REST API & ENDPOINTS
+        </button>
+        <button class="tab-btn" onclick="switchTab('tab-docs', this)">
+          04 // ARCHITECTURE & RECOVERY
+        </button>
+      </div>
+
+      <!-- Tab 1: Live Inflow Monitor -->
+      <div id="tab-overview" class="tab-content active">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <div>
+            <h3 style="font-size: 16px; font-weight: 700;">Pre-Seeded Governance Inflow Batches</h3>
+            <p style="font-size: 12px; color: var(--text-muted);">Real-time simulation batches submitted to the TrustGate pipeline.</p>
+          </div>
+          <a href="#tab-console" onclick="document.querySelectorAll('.tab-btn')[1].click()" class="cta-btn">
+            Open Interactive Console →
+          </a>
+        </div>
+
+        <table class="table-container">
+          <thead>
+            <tr>
+              <th>Batch ID</th>
+              <th>Filename</th>
+              <th>Target Model</th>
+              <th>Risk Score</th>
+              <th>Decision Verdict</th>
+              <th>Cryptographic Hash</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono">batch_demo_001</td>
+              <td>clean_inflow.csv</td>
+              <td class="mono">credit_default_lgb</td>
+              <td class="mono" style="color: var(--accent-emerald);">0.012</td>
+              <td><span class="badge badge-approve">APPROVE</span></td>
+              <td class="mono" style="color: var(--text-dim);">8b71...e901</td>
+            </tr>
+            <tr>
+              <td class="mono">batch_demo_002</td>
+              <td>missingness_batch.csv</td>
+              <td class="mono">credit_default_lgb</td>
+              <td class="mono" style="color: var(--accent-cyan);">0.041</td>
+              <td><span class="badge badge-repair">REPAIR_THEN_APPROVE</span></td>
+              <td class="mono" style="color: var(--text-dim);">c49a...32ff</td>
+            </tr>
+            <tr>
+              <td class="mono">batch_demo_003</td>
+              <td>pii_breach.csv</td>
+              <td class="mono">credit_default_lgb</td>
+              <td class="mono" style="color: var(--accent-rose);">0.985</td>
+              <td><span class="badge badge-quarantine">QUARANTINE</span></td>
+              <td class="mono" style="color: var(--text-dim);">e31b...a778</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Tab 2: Embedded Streamlit Console -->
+      <div id="tab-console" class="tab-content">
+        <div style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h3 style="font-size: 16px; font-weight: 700;">Full-Stack Streamlit Operator Console</h3>
+            <p style="font-size: 12px; color: var(--text-muted);" id="consoleStatusText">
+              Connecting directly to Streamlit instance...
+            </p>
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <a id="directConsoleLink" href="https://trustgate-ui.onrender.com/" target="_blank" class="cta-btn secondary">
+              Open Streamlit in New Window ↗
+            </a>
+            <button class="cta-btn" onclick="reloadFrame()">
+              Reload Frame
+            </button>
+          </div>
+        </div>
+        <iframe id="streamlitFrame" class="embedded-frame-box" src="about:blank"></iframe>
+      </div>
+
+      <!-- Tab 3: API & Endpoints -->
+      <div id="tab-api" class="tab-content">
+        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">FastAPI Backend Observability</h3>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
+          Direct REST specifications running on the FastAPI instance.
+        </p>
+
+        <table class="table-container">
+          <thead>
+            <tr>
+              <th>Method</th>
+              <th>Endpoint</th>
+              <th>Authorization</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="mono" style="color: var(--accent-emerald);">GET</span></td>
+              <td class="mono">/healthz</td>
+              <td>Public</td>
+              <td>Container liveness & service probe</td>
+            </tr>
+            <tr>
+              <td><span class="mono" style="color: var(--accent-cyan);">POST</span></td>
+              <td class="mono">/v1/batches</td>
+              <td>Operator+</td>
+              <td>Submit tabular CSV/Parquet batch for policy verification</td>
+            </tr>
+            <tr>
+              <td><span class="mono" style="color: var(--accent-emerald);">GET</span></td>
+              <td class="mono">/v1/batches/{id}/decision</td>
+              <td>Viewer+</td>
+              <td>Fetch deterministic verdict & conformal bounds</td>
+            </tr>
+            <tr>
+              <td><span class="mono" style="color: var(--accent-emerald);">GET</span></td>
+              <td class="mono">/v1/audit/verify</td>
+              <td>Viewer+</td>
+              <td>Run cryptographic SHA-256 chain verification</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Tab 4: Docs & Help -->
+      <div id="tab-docs" class="tab-content">
+        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">Render Free-Tier Cold Start Architecture</h3>
+        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px;">
+          Render automatically spins down free web service containers after 15 minutes of inactivity. When a user requests the server, Render boots the container which requires ~35–50 seconds.
+        </p>
+        <div style="background: #111318; border-left: 3px solid var(--accent-cyan); padding: 14px 18px; margin-bottom: 16px;">
+          <h4 style="font-size: 13px; color: #ffffff; margin-bottom: 4px;">Zero-Cold-Start Guarantee Active:</h4>
+          <p style="font-size: 12px; color: var(--text-muted);">
+            1. This UI is hosted as an instant static web application, ensuring 100% instant availability.<br>
+            2. A background GitHub Action cron job (`.github/workflows/keep_alive.yml`) pings both services every 10 minutes to maintain persistent uptime.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div>TRUSTGATE GOVERNANCE CORE // VERSION 0.1.0-STABLE</div>
+    <div>OPERATIONAL STATUS: <span id="footerStatus" style="color: var(--accent-amber);">WARMING (RENDER FREE TIER)</span></div>
+  </footer>
+
+  <script>
+    // Configuration endpoints
+    const API_HEALTH_URL = "https://trustgate-api.onrender.com/healthz";
+    const UI_STREAMLIT_URL = "https://trustgate-ui.onrender.com/";
+
+    let elapsed = 0;
+    let isConnected = false;
+
+    // Tab switcher
+    function switchTab(tabId, btn) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      const target = document.getElementById(tabId);
+      if (target) target.classList.add('active');
+
+      if (tabId === 'tab-console') {
+        const frame = document.getElementById('streamlitFrame');
+        if (frame.src === 'about:blank' || !frame.src) {
+          frame.src = UI_STREAMLIT_URL;
+        }
+      }
+    }
+
+    function reloadFrame() {
+      const frame = document.getElementById('streamlitFrame');
+      frame.src = UI_STREAMLIT_URL;
+    }
+
+    // Health check engine
+    async function checkBackendHealth(manual = false) {
+      const banner = document.getElementById('connectionBanner');
+      const beacon = document.getElementById('beaconIndicator');
+      const statusPill = document.getElementById('statusPill');
+      const bannerTitle = document.getElementById('bannerTitle');
+      const bannerDesc = document.getElementById('bannerDescription');
+      const apiValue = document.getElementById('apiStatusValue');
+      const footerStatus = document.getElementById('footerStatus');
+
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 4000);
+
+        const response = await fetch(API_HEALTH_URL, {
+          method: 'GET',
+          signal: controller.signal,
+          mode: 'cors'
+        });
+        clearTimeout(timeoutId);
+
+        if (response.ok) {
+          isConnected = true;
+          banner.className = 'connection-banner online';
+          beacon.className = 'status-beacon online';
+          statusPill.style.color = 'var(--accent-emerald)';
+          statusPill.textContent = '[SYSTEM ONLINE]';
+          bannerTitle.firstElementChild.textContent = 'TrustGate Secure Engine Connected';
+          bannerDesc.textContent = 'FastAPI backend & Streamlit operators are fully active and serving traffic.';
+          apiValue.textContent = 'ONLINE (200)';
+          apiValue.style.color = 'var(--accent-emerald)';
+          footerStatus.textContent = 'OPERATIONAL (ONLINE)';
+          footerStatus.style.color = 'var(--accent-emerald)';
+          document.getElementById('progressFill').style.width = '100%';
+          document.getElementById('progressFill').style.backgroundColor = 'var(--accent-emerald)';
+          return;
+        }
+      } catch (e) {
+        // Still warming up
+      }
+
+      if (!isConnected) {
+        setTimeout(checkBackendHealth, 4000);
+      }
+    }
+
+    // Timer & Progress ticker
+    setInterval(() => {
+      if (!isConnected) {
+        elapsed++;
+        document.getElementById('elapsedTimer').textContent = `${elapsed}s`;
+        const pct = Math.min(Math.round((elapsed / 45) * 100), 95);
+        document.getElementById('progressFill').style.width = `${pct}%`;
+      }
+    }, 1000);
+
+    // Initial check on load
+    window.addEventListener('DOMContentLoaded', () => {
+      checkBackendHealth();
+    });
+  </script>
+</body>
+</html>

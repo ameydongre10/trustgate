@@ -1,0 +1,24 @@
+name: Keep-Alive Heartbeat for Render Free Tier
+
+on:
+  schedule:
+    # Run every 10 minutes to prevent Render free-tier instance from sleeping (15-min timeout)
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping-services:
+    name: Ping TrustGate Services
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping TrustGate UI Dashboard
+        run: |
+          echo "Pinging trustgate-ui..."
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 60 https://trustgate-ui.onrender.com/ || echo "000")
+          echo "trustgate-ui responded with HTTP $HTTP_CODE"
+
+      - name: Ping TrustGate FastAPI Backend
+        run: |
+          echo "Pinging trustgate-api healthz..."
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 60 https://trustgate-api.onrender.com/healthz || echo "000")
+          echo "trustgate-api healthz responded with HTTP $HTTP_CODE"

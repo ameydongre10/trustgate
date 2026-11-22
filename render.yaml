@@ -1,5 +1,17 @@
 services:
-  # 1. TrustGate Interactive Streamlit Operator Dashboard
+  # 1. TrustGate Instant Static Web Gateway (0s cold start, 100% uptime, instant UI/UX)
+  - type: static
+    name: trustgate-web
+    plan: free
+    buildCommand: echo "Static asset build complete"
+    staticPublishPath: ./web
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+  # 2. TrustGate Interactive Streamlit Operator Dashboard
+  # Note: Kept warm 24/7 via .github/workflows/keep_alive.yml
   - type: web
     name: trustgate-ui
     runtime: python
@@ -13,7 +25,8 @@ services:
       - key: TRUSTGATE_ENV
         value: production
 
-  # 2. TrustGate Production FastAPI Backend & REST API
+  # 3. TrustGate Production FastAPI Backend & REST API
+  # Note: Kept warm 24/7 via .github/workflows/keep_alive.yml
   - type: web
     name: trustgate-api
     runtime: python

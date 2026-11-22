@@ -39,12 +39,7 @@ def _seed_demo_batches(queue: JobQueue) -> None:
         pii_bytes = pii_df.write_csv().encode("utf-8")
         queue.submit_batch(raw_bytes=pii_bytes, filename="pii_breach.csv", target_model_name="credit_default_lgb")
 
-        # Wait briefly for worker thread to process initial seed batches
-        for _ in range(25):
-            jobs = queue.list_jobs()
-            if len(jobs) >= 3 and all(j.status not in (JobStatus.PENDING, JobStatus.RUNNING) for j in jobs):
-                break
-            time.sleep(0.1)
+        # Submit batches to queue for asynchronous worker processing (non-blocking)
     except Exception:
         pass
 
@@ -73,8 +68,6 @@ def render_dashboard() -> None:
 
     # Smooth initial connection indicator
     if "backend_connected" not in st.session_state:
-        with st.spinner("Connecting to TrustGate Full-Stack Engine..."):
-            time.sleep(0.3)
         st.session_state["backend_connected"] = True
         st.toast("Connected to TrustGate Agent Pipeline!", icon="🛡️")
 
