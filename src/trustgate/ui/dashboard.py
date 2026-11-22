@@ -39,7 +39,12 @@ def _seed_demo_batches(queue: JobQueue) -> None:
         pii_bytes = pii_df.write_csv().encode("utf-8")
         queue.submit_batch(raw_bytes=pii_bytes, filename="pii_breach.csv", target_model_name="credit_default_lgb")
 
-        # Submit batches to queue for asynchronous worker processing (non-blocking)
+        # Wait briefly for worker thread to process initial seed batches so dynamic views are populated
+        for _ in range(25):
+            jobs = queue.list_jobs()
+            if len(jobs) >= 3 and all(j.status not in (JobStatus.PENDING, JobStatus.RUNNING) for j in jobs):
+                break
+            time.sleep(0.1)
     except Exception:
         pass
 
@@ -71,6 +76,32 @@ def render_dashboard() -> None:
         st.session_state["backend_connected"] = True
         st.toast("Connected to TrustGate Agent Pipeline!", icon="🛡️")
 
+    # Instant Static-to-Dynamic Bootloader Overlay (Displays for ~2.5s then dissolves smoothly into live dynamic UI)
+    st.markdown(
+        """
+        <div id="trustgate-bootloader" class="bootloader-overlay">
+            <div class="bootloader-card">
+                <div class="bootloader-header">
+                    <span class="bootloader-beacon"></span>
+                    <span class="bootloader-title">TRUSTGATE // 01</span>
+                </div>
+                <div class="bootloader-sub">CONNECTING TO DYNAMIC IMPACT-AWARE ENGINE</div>
+                <p class="bootloader-desc">
+                    Warming up downstream model simulators, TreeSHAP explainers, and SHA-256 audit ledger. Full interactive console loading...
+                </p>
+                <div class="bootloader-progress-track">
+                    <div class="bootloader-progress-fill"></div>
+                </div>
+                <div class="bootloader-footer">
+                    <span>INITIALIZING FULL DYNAMIC WORKSPACE</span>
+                    <span>STANDBY ~2.5s</span>
+                </div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
     # Editorial Brutalist / Institutional Authority Style Injection
     st.markdown(
         """
@@ -83,6 +114,116 @@ def render_dashboard() -> None:
             background-color: #09090b !important;
             color: #f4f4f5 !important;
             -webkit-font-smoothing: antialiased;
+        }
+
+        /* Static Bootloader Screen (Fades out after 2.4s to reveal 100% dynamic app) */
+        .bootloader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #09090b;
+            z-index: 9999999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeOutBootloader 0.5s cubic-bezier(0.16, 1, 0.3, 1) 2.4s forwards;
+            pointer-events: none;
+        }
+
+        @keyframes fadeOutBootloader {
+            0% { opacity: 1; visibility: visible; }
+            99% { opacity: 0; visibility: visible; }
+            100% { opacity: 0; visibility: hidden; display: none; }
+        }
+
+        .bootloader-card {
+            background: #0f1013;
+            border: 1px solid #27272a;
+            border-left: 4px solid #10b981;
+            padding: 32px 36px;
+            max-width: 520px;
+            width: 90%;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+        }
+
+        .bootloader-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+
+        .bootloader-beacon {
+            width: 10px;
+            height: 10px;
+            background: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 12px #10b981;
+            display: inline-block;
+            animation: beaconPulse 1.2s infinite alternate;
+        }
+
+        @keyframes beaconPulse {
+            0% { opacity: 0.4; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1.15); }
+        }
+
+        .bootloader-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+            color: #ffffff;
+        }
+
+        .bootloader-sub {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #a1a1aa;
+            margin-bottom: 14px;
+        }
+
+        .bootloader-desc {
+            font-size: 13px;
+            color: #71717a;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .bootloader-progress-track {
+            width: 100%;
+            height: 4px;
+            background: #18181b;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .bootloader-progress-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #06b6d4);
+            animation: fillBootloaderProgress 2.2s ease-in-out forwards;
+        }
+
+        @keyframes fillBootloaderProgress {
+            0% { width: 0%; }
+            35% { width: 45%; }
+            70% { width: 85%; }
+            100% { width: 100%; }
+        }
+
+        .bootloader-footer {
+            display: flex;
+            justify-content: space-between;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: #52525b;
+            letter-spacing: 0.05em;
         }
 
         /* Enforce tabular numerals across all numbers and data tables */
