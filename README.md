@@ -11,13 +11,21 @@
 
 ---
 
-## 🌐 Single Live Public URL & Custom Dataset Evaluation
+## 🌐 Production Live Deployments & Service Endpoints
 
-Access the entire full-stack TrustGate engine smoothly through the unified live console:
+TrustGate is deployed across production cloud services with automated 24/7 uptime protection and zero-cold-start acceleration:
 
-### 👉 **[https://trustgate-ui.onrender.com](https://trustgate-ui.onrender.com)**
+| Service / Interface | Type | Live Production URL | Operational Role |
+| :--- | :--- | :--- | :--- |
+| **TrustGate Operator Console** | **Dynamic App** | **[https://trustgate-ui.onrender.com](https://trustgate-ui.onrender.com)** | **Primary Interactive Dashboard**: Features an instant ~2.5s branded static bootloader that seamlessly dissolves into the live dynamic Streamlit console. Includes custom CSV upload, TreeSHAP attributions, Human Review Queue, and Append-Only Audit Ledger. |
+| **TrustGate Static Gateway** | **Static Web UI** | **[https://trustgate-web.onrender.com](https://trustgate-web.onrender.com)** | **Zero-Delay CDN Front Door**: Instant (<200ms) page load from global CDN with real-time backend connection telemetry and seamless handoff into the full dynamic workspace. |
+| **TrustGate FastAPI Backend** | **REST Engine** | **[https://trustgate-api.onrender.com](https://trustgate-api.onrender.com)** | High-throughput asynchronous batch processing, risk evaluation, and split-conformal inference API. |
+| **Interactive API Documentation** | **Swagger UI** | **[https://trustgate-api.onrender.com/docs](https://trustgate-api.onrender.com/docs)** | OpenAPI 3.1 interactive explorer for payload schemas, cURL snippets, and RBAC key testing. |
+| **Observability Health Probe** | **Health Check** | **[https://trustgate-api.onrender.com/healthz](https://trustgate-api.onrender.com/healthz)** | Public container liveness and readiness probe (returns HTTP 200 OK). |
+| **Prometheus Telemetry** | **Metrics** | **[https://trustgate-api.onrender.com/metrics](https://trustgate-api.onrender.com/metrics)** | Real-time Prometheus metrics counters, risk scores, and latency histograms. |
 
-*(Runs full-stack: Executive KPI Dashboard, Real-time Batch Inspector with TreeSHAP factor attributions, Human Review Queue, Append-Only SHA-256 Audit Ledger, Custom CSV Upload & Quick Batch Simulator, and REST API Explorer — zero black screens, smooth connection sequence, and instant pre-seeded interactive data).*
+> [!NOTE]
+> **24/7 Keep-Alive Heartbeat**: Powered by [`.github/workflows/keep_alive.yml`](.github/workflows/keep_alive.yml), which automatically queries `trustgate-ui` and `trustgate-api` every 10 minutes to prevent Render free-tier instances from entering idle sleep mode.
 
 ---
 
