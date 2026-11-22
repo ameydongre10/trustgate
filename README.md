@@ -14,8 +14,7 @@
 ## 🌐 Production Live Deployments & Service Endpoints
 
 TrustGate is deployed across production cloud services with automated 24/7 uptime protection and zero-cold-start acceleration:
-
-| **TrustGate Operator Console** | **Dynamic App** | **[https://trustgate-ui.onrender.com](https://trustgate-ui.onrender.com)** 
+**[https://trustgate-ui.onrender.com](https://trustgate-ui.onrender.com)** 
 
 > [!NOTE]
 > **24/7 Keep-Alive Heartbeat**: Powered by [`.github/workflows/keep_alive.yml`](.github/workflows/keep_alive.yml), which automatically queries `trustgate-ui` and `trustgate-api` every 10 minutes to prevent Render free-tier instances from entering idle sleep mode.
