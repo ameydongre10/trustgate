@@ -15,8 +15,6 @@
 
 TrustGate is deployed across production cloud services with automated 24/7 uptime protection and zero-cold-start acceleration:
 
-| Service / Interface | Type | Live Production URL 
-| :--- | :--- | :--- | :--- |
 | **TrustGate Operator Console** | **Dynamic App** | **[https://trustgate-ui.onrender.com](https://trustgate-ui.onrender.com)** 
 
 > [!NOTE]
